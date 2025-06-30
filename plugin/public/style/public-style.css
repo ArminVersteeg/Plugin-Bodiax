@@ -1,0 +1,52 @@
+/* General styling*/
+:root {
+	--color-primary: #b25f35;
+	--color-dark: #233452;
+	--color-border: #57575757;
+}
+
+/* CRUD Form and Table styling */
+.vertegenwoordigers-form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+}
+
+.form-group-vertegenwoordigers {
+	display: flex;
+	flex-direction: column;
+	margin-right: 10px;
+	min-width: 25%;
+}
+
+.vertegenwoordigers-form .form-group-vertegenwoordigers input,
+.vertegenwoordigers-form .form-group-vertegenwoordigers select {
+	border-radius: 7px;
+	min-width: 100%;
+	height: 36px;
+}
+
+.form-group-vertegenwoordigers-button {
+	margin-left: auto;
+}
+
+.vertegenwoordigers-table-row {
+	background-color: var(--color-primary);
+	border: 1px solid var(--color-primary);
+	color: white;
+}
+
+.vertegenwoordigers-table-row th {
+	font-weight: 300;
+	border: none;
+}
+
+.vertegenwoordigers-table td {
+	border: 1px solid var(--color-border);
+	text-align: left;
+}
+
+.table-mail-link {
+	color: var(--color-dark) !important;
+}
+/* CRUD Form and Table END */

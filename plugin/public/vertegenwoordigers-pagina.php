@@ -209,3 +209,32 @@ function handle_vertegenwoordiger_create() {
 	wp_redirect(home_url('/vertegenwoordigers'));
 	exit;
 }
+
+// === UPDATE HANDLER ===
+add_action('admin_post_vertegenwoordiger_update', 'handle_vertegenwoordiger_update');
+
+function handle_vertegenwoordiger_update() {
+	$id = intval($_POST['id'] ?? 0);
+	
+	// Validate ID: if invalid, stop
+	if (!$id || get_post_type($id) !== 'vertegenwoordiger') {
+		wp_die('Ongeldig ID');
+	}
+	
+	// Validate nonce: if invalid, stop
+	if (!isset($_POST['vertegenwoordiger_nonce']) || !wp_verify_nonce($_POST['vertegenwoordiger_nonce'], 'vertegenwoordiger_update_action_' . $id)) {
+		wp_die('Beveiligingsfout');
+	}
+	
+	$name = sanitize_text_field($_POST['vertegenwoordiger_name']);
+	$email = sanitize_email($_POST['vertegenwoordiger_email']);
+	$region = sanitize_text_field($_POST['vertegenwoordiger_region']);
+	
+	update_post_meta($id, 'vertegenwoordiger_name', $name);
+	update_post_meta($id, 'vertegenwoordiger_email', $email);
+	update_post_meta($id, 'vertegenwoordiger_region', $region);
+	
+	
+	wp_redirect(home_url('/vertegenwoordigers'));
+	exit;
+}

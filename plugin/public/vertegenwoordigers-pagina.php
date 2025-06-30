@@ -238,3 +238,26 @@ function handle_vertegenwoordiger_update() {
 	wp_redirect(home_url('/vertegenwoordigers'));
 	exit;
 }
+
+// === DELETE HANDLER ===
+add_action('admin_post_vertegenwoordiger_delete', 'handle_vertegenwoordiger_delete');
+
+function handle_vertegenwoordiger_delete() {
+	// Validate ID: if invalid, stop
+	if (!isset($_GET['id'])) {
+		wp_die('Geen ID opgegeven');
+	}
+	
+	$id = intval($_GET['id']);
+	$nonce = $_GET['_wpnonce'];
+	
+	// Validate nonce: if invalid, stop
+	if (!wp_verify_nonce($nonce, 'delete_vertegenwoordiger_' . $id)) {
+		wp_die('Ongeldige nonce');
+	}
+	
+	// Delete post and send user back to 'vertegenwoordigers' page
+	wp_delete_post($id, true);
+	wp_redirect(home_url('/vertegenwoordigers'));
+	exit;
+}

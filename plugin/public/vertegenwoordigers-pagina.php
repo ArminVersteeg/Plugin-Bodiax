@@ -31,6 +31,88 @@ function vertegenwoordiger_form_shortcode() {
 }
 add_shortcode('vertegenwoordiger_form', 'vertegenwoordiger_form_shortcode');
 
+// === VERTEGENWOORDIGER TABLE ===
+function vertegenwoordiger_table_html($entries) {
+	if (!$entries) return '<table class="vertegenwoordigers-table" style="border-collapse: collapse;">
+								<thead>
+									<tr class="vertegenwoordigers-table-row">
+										<th style="width: 30%;">Naam</th>
+										<th style="width: 30%;">E-mail</th>
+										<th style="width: 25%;">Regio</th>
+										<th style="width: 10%;">ID</th>
+										<th style="width: 5%;"></th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+							<div class="error-container">
+								<p class="error-message">Geen vertegenwoordigers gevonden.</p>
+							</div>';
+	
+	$html = '<table class="vertegenwoordigers-table" style="border-collapse: collapse;">
+				<thead>
+					<tr class="vertegenwoordigers-table-row">
+						<th style="width: 30%;">Naam</th>
+						<th style="width: 30%;">E-mail</th>
+						<th style="width: 25%;">Regio</th>
+						<th style="width: 10%;">ID</th>
+						<th style="width: 5%;"></th>
+					</tr>
+				</thead>
+				<tbody>';
+	
+	// List all entries in table
+	foreach ($entries as $entry) {
+		$name = get_post_meta($entry->ID, 'vertegenwoordiger_name', true);
+		$email = get_post_meta($entry->ID, 'vertegenwoordiger_email', true);
+		$region = get_post_meta($entry->ID, 'vertegenwoordiger_region', true);
+		$edit_url = add_query_arg(['id' => $entry->ID], site_url('/bewerken'));
+		$delete_url = wp_nonce_url(admin_url('admin-post.php?action=vertegenwoordiger_delete&id=' . $entry->ID), 'delete_vertegenwoordiger_' . $entry->ID);
+		
+		$html .= '<tr>';
+		$html .= '<td class="vertegenwoordigers-name">' . esc_html($name) . '</td>';
+		$html .= '<td class="vertegenwoordigers-email">' . '<a class="table-mail-link" href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a>' . '</td>';
+		$html .= '<td class="vertegenwoordigers-region">' . esc_html($region) . '</td>';
+		$html .= '<td class="vertegenwoordigers-id">' '</td>';
+		$html .= '<td class="vertegenwoordiger-menu">
+				<div class="hamburger-menu">
+					<button class="hamburger-toggle">☰</button>
+					<div class="hamburger-dropdown">
+						<a href="' . esc_url($edit_url) . '">Bewerken</a>
+						<a href="' . esc_url($delete_url) . '" onclick="return confirm(\'Weet je het zeker?\')">Verwijderen</a>
+					</div>
+				</div>
+			</td>';
+		$html .= '</tr>';
+	}
+	
+	$html .= '</tbody></table>';
+	return $html;
+}
+
+// === LISTING SHORTCODE ===
+function list_vertegenwoordigers_shortcode() {
+	$entries = get_posts([
+		'post_type' => 'vertegenwoordiger',
+		'numberposts' => 10,
+		'paged' => 1
+	]);
+	
+	$output = '<div class="vertegenwoordiger-spinner-container">
+				<div id="custom-spinner" style="display: none;"></div>
+			</div>
+			<div class="vertegenwoordigers-search-container">
+				<input type="text" id="vertegenwoordigers-search" placeholder="Zoeken..." />
+			</div>
+			<div id="vertegenwoordiger-results">' 
+				. vertegenwoordiger_table_html($entries) .
+			'</div>';
+	
+	return $output;
+}
+add_shortcode('list_vertegenwoordigers', 'list_vertegenwoordigers_shortcode');
+
 // === CREATE HANDLER ===
 add_action('admin_post_vertegenwoordiger_create', 'handle_vertegenwoordiger_create');
 add_action('admin_post_nopriv_vertegenwoordiger_create', 'handle_vertegenwoordiger_create');

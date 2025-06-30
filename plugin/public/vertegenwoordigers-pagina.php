@@ -67,6 +67,7 @@ function vertegenwoordiger_table_html($entries) {
 		$name = get_post_meta($entry->ID, 'vertegenwoordiger_name', true);
 		$email = get_post_meta($entry->ID, 'vertegenwoordiger_email', true);
 		$region = get_post_meta($entry->ID, 'vertegenwoordiger_region', true);
+		$custom_id = get_post_meta($entry->ID, 'vertegenwoordiger_custom_id', true);
 		$edit_url = add_query_arg(['id' => $entry->ID], site_url('/bewerken'));
 		$delete_url = wp_nonce_url(admin_url('admin-post.php?action=vertegenwoordiger_delete&id=' . $entry->ID), 'delete_vertegenwoordiger_' . $entry->ID);
 		
@@ -74,7 +75,7 @@ function vertegenwoordiger_table_html($entries) {
 		$html .= '<td class="vertegenwoordigers-name">' . esc_html($name) . '</td>';
 		$html .= '<td class="vertegenwoordigers-email">' . '<a class="table-mail-link" href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a>' . '</td>';
 		$html .= '<td class="vertegenwoordigers-region">' . esc_html($region) . '</td>';
-		$html .= '<td class="vertegenwoordigers-id">' '</td>';
+		$html .= '<td class="vertegenwoordigers-id">' . esc_html($custom_id) . '</td>';
 		$html .= '<td class="vertegenwoordiger-menu">
 				<div class="hamburger-menu">
 					<button class="hamburger-toggle">☰</button>
@@ -158,6 +159,30 @@ function edit_vertegenwoordiger_shortcode($atts) {
 }
 add_shortcode('edit_vertegenwoordiger', 'edit_vertegenwoordiger_shortcode');
 
+// === CUSTOM ID GENERATOR ===
+function generate_unique_custom_id($region) {
+	$prefixes = ['Noord' => 'NO-', 'Oost' => 'OO-', 'Zuid' => 'ZU-', 'West' => 'WE-'];
+	$prefix = $prefixes[$region] ?? 'XX';
+	$used_ids = [];
+	
+	$existing_ids = get_posts([
+		'post_type' => 'vertegenwoordiger',
+		'posts_per_page' => -1,
+		'fields' => 'ids',
+	]);
+	
+	foreach ($existing_ids as $post_id) {
+		$used_ids[] = get_post_meta($post_id, 'vertegenwoordiger_custom_id', true);
+	}
+	
+	do {
+		$random_number = rand(1000, 9999);
+		$new_id = $prefix . $random_number;
+	} while (in_array($new_id, $used_ids));
+	
+	return $new_id;
+}
+
 // === CREATE HANDLER ===
 add_action('admin_post_vertegenwoordiger_create', 'handle_vertegenwoordiger_create');
 add_action('admin_post_nopriv_vertegenwoordiger_create', 'handle_vertegenwoordiger_create');
@@ -204,6 +229,8 @@ function handle_vertegenwoordiger_create() {
 		update_post_meta($post_id, 'vertegenwoordiger_name', $name);
 		update_post_meta($post_id, 'vertegenwoordiger_email', $email);
 		update_post_meta($post_id, 'vertegenwoordiger_region', $region);
+		$custom_id = generate_unique_custom_id($region);
+		update_post_meta($post_id, 'vertegenwoordiger_custom_id', $custom_id);
 	}
 	
 	wp_redirect(home_url('/vertegenwoordigers'));
@@ -229,11 +256,18 @@ function handle_vertegenwoordiger_update() {
 	$name = sanitize_text_field($_POST['vertegenwoordiger_name']);
 	$email = sanitize_email($_POST['vertegenwoordiger_email']);
 	$region = sanitize_text_field($_POST['vertegenwoordiger_region']);
+	$old_region = get_post_meta($id, 'vertegenwoordiger_region', true);
+	$old_custom_id = get_post_meta($id, 'vertegenwoordiger_custom_id', true);
 	
 	update_post_meta($id, 'vertegenwoordiger_name', $name);
 	update_post_meta($id, 'vertegenwoordiger_email', $email);
 	update_post_meta($id, 'vertegenwoordiger_region', $region);
 	
+	// Check if region is changed, if so, create new ID based on new region
+	if ($old_region !== $region) {
+		$new_custom_id = generate_unique_custom_id($region);
+		update_post_meta($id, 'vertegenwoordiger_custom_id', $new_custom_id);
+	}
 	
 	wp_redirect(home_url('/vertegenwoordigers'));
 	exit;

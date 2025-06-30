@@ -113,6 +113,51 @@ function list_vertegenwoordigers_shortcode() {
 }
 add_shortcode('list_vertegenwoordigers', 'list_vertegenwoordigers_shortcode');
 
+// === EDIT SHORTCODE ===
+function edit_vertegenwoordiger_shortcode($atts) {
+	$atts = shortcode_atts(['id' => 0], $atts);
+	$id = isset($_GET['id']) ? intval($_GET['id']) : intval($atts['id']);
+	
+	// Check if post ID is invalid
+	if (!$id || get_post_type($id) !== 'vertegenwoordiger') {
+		return 'Ongeldig ID';
+	}
+	
+	$post = get_post($id);
+	$name = get_post_meta($id, 'vertegenwoordiger_name', true);
+	$email = get_post_meta($id, 'vertegenwoordiger_email', true);
+	$region = get_post_meta($id, 'vertegenwoordiger_region', true);
+	
+	// Build form
+	ob_start(); ?>
+	<form class="vertegenwoordigers-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
+		<input type="hidden" name="action" value="vertegenwoordiger_update">
+		<input type="hidden" name="id" value="<?php echo esc_attr($id); ?>">
+		<?php wp_nonce_field('vertegenwoordiger_update_action_' . $id, 'vertegenwoordiger_nonce'); ?>
+		<div class="form-group-vertegenwoordigers">
+			<label>Update de gegevens:</label>
+			<input placeholder="Naam" type="text" name="vertegenwoordiger_name" value="<?php echo esc_attr($name); ?>" required>
+		</div>
+		<div class="form-group-vertegenwoordigers">
+			<input placeholder="E-mail" type="email" name="vertegenwoordiger_email" value="<?php echo esc_attr($email); ?>" required>
+		</div>
+		<div class="form-group-vertegenwoordigers">
+			<select name="vertegenwoordiger_region" required>
+				<option value="">Selecteer een Regio</option>
+				<option value="Noord" <?php selected($region, 'Noord'); ?>>Noord</option>
+				<option value="Zuid" <?php selected($region, 'Zuid'); ?>>Zuid</option>
+				<option value="Oost" <?php selected($region, 'Oost'); ?>>Oost</option>
+				<option value="West" <?php selected($region, 'West'); ?>>West</option>
+			</select>
+		</div>
+		<div class="form-group-vertegenwoordigers-button">
+			<button class="custom-button" style="border-radius: 10px;" type="submit">Bijwerken</button>
+		</div>
+	</form>
+	<?php return ob_get_clean();
+}
+add_shortcode('edit_vertegenwoordiger', 'edit_vertegenwoordiger_shortcode');
+
 // === CREATE HANDLER ===
 add_action('admin_post_vertegenwoordiger_create', 'handle_vertegenwoordiger_create');
 add_action('admin_post_nopriv_vertegenwoordiger_create', 'handle_vertegenwoordiger_create');

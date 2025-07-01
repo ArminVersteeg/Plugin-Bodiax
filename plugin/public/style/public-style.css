@@ -1,67 +1,12 @@
 /* General styling*/
 :root {
 	--color-primary: #b25f35;
-	--color-accent: #e99d20;
+	--color-accent: #de8457;
 	--color-dark: #233452;
 	--color-border: #57575757;
 	--error-red: #eb4034;
+	--error-bg-red: #ffeceb;
 }
-
-/* Header profile stying */
-#header-widget-area {
-	margin-top: 2em;
-}
-
-.user-profile-widget {
-    position: relative;
-	float: right;
-}
-
-.user-profile-widget .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-	object-fit: cover;
-}
-
-.profile-dropdown {
-    display: none;
-    position: absolute;
-    top: 45px;
-    right: 0;
-    background-color: white;
-    border: 1px solid var(--color-border-light);
-    min-width: 120px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
-	border-radius: 7px;
-}
-
-.profile-dropdown a {
-    display: block;
-    text-decoration: none;
-    color: var(--color-dark);
-	padding: 10px 20px;
-	font-size: 14px
-}
-
-.profile-dropdown p {
-	color: var(--color-grey);
-	padding: 10px 20px;
-	font-size: 14px;
-	margin: 0px  50px 0px 0px !important;
-}
-
-.logout-btn {
-	border-radius: 0px 0px 7px 7px;
-	border-top: 1px solid var(--color-bg-light);
-}
-
-.profile-dropdown a:hover {
-    background-color: var(--color-bg-light);
-}
-/* Header profile END */
 
 /* Searchbar styling */
 .vertegenwoordigers-search-container {
@@ -79,7 +24,7 @@
 
 /* No result error styling */
 .error-container {
-	background-color: #ffeceb;
+	background-color: var(--error-bg-red);
 	border: 1px solid var(--error-red);
 	margin: 5px 0px;
 	padding: 10px 0px;
@@ -178,6 +123,59 @@
 }
 /* CRUD Form and Table END */
 
+/* Hamburger menu styling */
+.hamburger-menu {
+	position: relative;
+	float: right;
+}
+
+.hamburger-toggle {
+	background: none;
+	border: none;
+	font-size: 18px;
+	cursor: pointer;
+	padding: 4px 10px;
+	color: black;
+}
+
+.hamburger-toggle:hover {
+	color: var(--color-primary);
+}
+
+.hamburger-dropdown {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	background: white;
+	border: 1px solid var(--color-border);
+	border-radius: 7px;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+	min-width: 120px;
+	z-index: 999;
+	transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.hamburger-dropdown.show {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.hamburger-dropdown a {
+	display: block;
+	padding: 10px;
+	color: #333;
+	font-size: 14px;
+	border-bottom: 1px solid #eee;
+}
+
+.hamburger-dropdown a:last-child {
+	border-bottom: none;
+}
+/* Hamburger menu END */
+
 /* Pagination styling */
 .vertegenwoordiger-pagination {
 	display: flex;
@@ -230,3 +228,86 @@
 	height: 28px;
 }
 /* AJAX Spinner END */
+
+/* Buttons styling */
+#csv-upload-icon {
+	height: 1em;
+	fill: white;
+}
+
+.custom-button {
+	padding: 5px 20px;
+	border-radius: 7px;
+	letter-spacing: 2px;
+	font-size: 13px;
+}
+
+.custom-button:hover {
+	background-color: var(--color-accent);
+	border-color: var(--color-accent);
+	color: white;
+}
+
+.toggle-buttons-container {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 10px;
+}
+/* Buttons END */
+
+/* Profile page styling */
+#change-logo-button {
+	border-color: #dbdbdb;
+	background-color: white;
+	color: black;
+}
+
+#change-logo-button:hover {
+	background-color: rgb(249 250 251);
+}
+
+.saved-status-success {
+	background-color: #c2f5bb;
+	border: 1px solid #266f26;
+	color: #266f26;
+	width: 25rem;
+	padding: 10px 20px;
+}
+
+.saved-status-failed {
+	background-color: var(--error-bg-red);
+	border: 1px solid var(--error-red);
+	color: var(--error-red);
+	width: 25rem;
+	padding: 10px 20px;
+}
+
+#profile-edit-form div label input, #password-update-form div label input {
+	border-radius: 7px;
+	padding: .5rem .75rem;
+	height: 40px;
+	width: 100%
+}
+
+#profile-edit-form div label, #password-update-form div label {
+	width: 100%;
+	margin-top: 15px;
+}
+
+.profile-edit-submit-container button, .password-update-submit button {
+	float: right;
+	border: none;
+	background-color: black;
+	color: white;
+}
+
+#avatar-preview {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	display: block;
+	object-fit: cover;
+	margin-bottom: 8px;
+}
+/* Profile page END */

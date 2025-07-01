@@ -1,8 +1,10 @@
 /* General styling*/
 :root {
 	--color-primary: #b25f35;
+	--color-accent: #e99d20;
 	--color-dark: #233452;
 	--color-border: #57575757;
+	--error-red: #eb4034;
 }
 
 /* Searchbar styling */
@@ -22,16 +24,57 @@
 /* No result error styling */
 .error-container {
 	background-color: #ffeceb;
-	border: 1px solid #eb4034;
+	border: 1px solid var(--error-red);
 	margin: 5px 0px;
 	padding: 10px 0px;
 }
 
 .error-message {
-	color: #eb4034;
+	color: var(--error-red);
 	margin: 0px 10px;
 }
 /* No result error END*/
+
+/* Duplicate error styling */
+.modal-overlay {
+	position: fixed;
+	top: 0; left: 0;
+	width: 100vw; height: 100vh;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+}
+
+.modal-box {
+	background: white;
+	padding: 20px 30px;
+	border-radius: 7px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+	text-align: center;
+	position: relative;
+}
+
+.modal-message {
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+
+.modal-button {
+	background-color: var(--color-primary);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 7px;
+	cursor: pointer;
+}
+
+.modal-button:hover {
+	background-color: var(--color-accent);
+	color: white;
+}
+/* Duplicate error END */
 
 /* CRUD Form and Table styling */
 .vertegenwoordigers-form {

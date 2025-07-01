@@ -151,3 +151,20 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 });
+
+// Profile dropdown variables
+const avatar = document.getElementById('user-avatar');
+const dropdown = document.getElementById('profile-dropdown');
+
+// User profile dropdown
+if (avatar && dropdown) {
+	avatar.addEventListener('click', function () {
+		dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	});
+	
+	document.addEventListener('click', function (e) {
+		if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+			dropdown.style.display = 'none';
+		}
+	});
+}

@@ -1,4 +1,3 @@
-
 (function($){
 	$('#profile-edit-form').on('submit', function(e){
 		e.preventDefault();

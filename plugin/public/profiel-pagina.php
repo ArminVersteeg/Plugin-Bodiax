@@ -122,3 +122,33 @@ function custom_override_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	
 	return $avatar;
 }
+
+// === UPDATE PASSWORD SECTION SHORTCODE ===
+add_shortcode('update_password_form', 'custom_update_password_form_shortcode');
+function custom_update_password_form_shortcode() {
+	if (!is_user_logged_in()) return '<p>Please log in to change your password.</p>'; // Show error when no user is logged in
+	
+	ob_start(); ?>
+	<form id="password-update-form">
+		<div class="password-update-field">
+			<label>Huidig wachtwoord:<br>
+				<input type="password" name="current_password" required>
+			</label>
+		</div>
+		<div class="password-update-field">
+			<label>Nieuw wachtwoord:<br>
+				<input type="password" name="new_password" required>
+			</label>
+		</div>
+		<div class="password-update-field">
+			<label>Bevestig nieuw wachtwoord:<br>
+				<input type="password" name="confirm_new_password" required>
+			</label>
+		</div>
+		<div class="password-update-submit">
+			<button class="custom-button" type="submit">Wachtwoord bijwerken</button>
+			<p id="password-update-status" style="margin-top: 10px;"></p>
+		</div>
+	</form>
+	<?php return ob_get_clean();
+}

@@ -122,6 +122,59 @@
 }
 /* CRUD Form and Table END */
 
+/* Hamburger menu styling */
+.hamburger-menu {
+	position: relative;
+	float: right;
+}
+
+.hamburger-toggle {
+	background: none;
+	border: none;
+	font-size: 18px;
+	cursor: pointer;
+	padding: 4px 10px;
+	color: black;
+}
+
+.hamburger-toggle:hover {
+	color: var(--color-primary);
+}
+
+.hamburger-dropdown {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	background: white;
+	border: 1px solid var(--color-border);
+	border-radius: 7px;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+	min-width: 120px;
+	z-index: 999;
+	transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.hamburger-dropdown.show {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.hamburger-dropdown a {
+	display: block;
+	padding: 10px;
+	color: #333;
+	font-size: 14px;
+	border-bottom: 1px solid #eee;
+}
+
+.hamburger-dropdown a:last-child {
+	border-bottom: none;
+}
+/* Hamburger menu END */
+
 /* Pagination styling */
 .vertegenwoordiger-pagination {
 	display: flex;
@@ -174,3 +227,30 @@
 	height: 28px;
 }
 /* AJAX Spinner END */
+
+/* Buttons styling */
+#csv-upload-icon {
+	height: 1em;
+	fill: white;
+}
+
+.custom-button {
+	padding: 5px 20px;
+	border-radius: 7px;
+	letter-spacing: 2px;
+	font-size: 13px;
+}
+
+.custom-button:hover {
+	background-color: #de8457;
+	border-color: #de8457;
+	color: white;
+}
+
+.toggle-buttons-container {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 10px;
+}
+/* Buttons END */

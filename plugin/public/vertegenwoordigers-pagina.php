@@ -404,3 +404,71 @@ function filter_vertegenwoordiger_post_title($where, $wp_query) {
 }
 add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);
 // ============================================
+
+
+// =============== CSV UPLOAD =================
+// ============ PROCESS CSV FILE ==============
+function handle_csv_upload() {
+	// Check nonce for security
+	if (!isset($_POST['csv_upload_nonce']) || !wp_verify_nonce($_POST['csv_upload_nonce'], 'csv_upload_action')) {
+		wp_die('Security check failed.');
+	}
+	
+	// Check if a file has been uploaded
+	if (empty($_FILES['csv_file']['tmp_name'])) {
+		wp_die('No file uploaded.');
+	}
+	
+	// Get the uploaded file
+	$file = $_FILES['csv_file'];
+	
+	// Check if it's a valid CSV file
+	if ($file['type'] !== 'text/csv' && $file['type'] !== 'application/vnd.ms-excel') {
+		wp_die('Invalid file type. Please upload a CSV file.');
+	}
+	
+	$handle = fopen($file['tmp_name'], 'r'); // Open the file for reading
+	$row = 0;
+	
+	if ($handle !== false) {
+		while (($data = fgetcsv($handle, 1000, ';')) !== false) {
+			// Skip row 0
+			if ($row === 0) {
+				$row++;
+				continue;
+			}
+			
+			// Parse the CSV data
+			$name = sanitize_text_field($data[0]); // Sanitize name field
+			$email = sanitize_email($data[1]); // Sanitize email field
+			$region = ucfirst(strtolower(sanitize_text_field($data[2]))); // Decapitalize value > Capitalise first letter > Sanitize field
+			
+			// Generate the unique timestamp for this post
+			$unique_timestamp = time() + $row;
+			
+			// Insert the data into the custom post type 'vertegenwoordiger'
+			$post_id = wp_insert_post([
+				'post_type' => 'vertegenwoordiger',
+				'post_status' => 'publish',
+				'post_title' => $name,
+				'post_date' => date('Y-m-d H:i:s', $unique_timestamp), // Set the unique post date and time
+			]);
+			
+			if ($post_id) {
+				update_post_meta($post_id, 'vertegenwoordiger_name', $name);
+				update_post_meta($post_id, 'vertegenwoordiger_email', $email);
+				update_post_meta($post_id, 'vertegenwoordiger_region', $region);
+				$custom_id = generate_unique_custom_id($region);
+				update_post_meta($post_id, 'vertegenwoordiger_custom_id', $custom_id);
+			}
+			
+			$row++;
+		}
+		fclose($handle);
+	}
+	
+	wp_redirect($_SERVER['HTTP_REFERER']); // Redirect user back to previous page
+	exit;
+}
+add_action('admin_post_process_csv_upload', 'handle_csv_upload');
+// ==========================================

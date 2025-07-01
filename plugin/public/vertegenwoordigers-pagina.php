@@ -225,6 +225,22 @@ function handle_vertegenwoordiger_create() {
 		wp_die('Ongeldige invoer');
 	}
 
+	// Run duplicates check
+	$check = check_vertegenwoordiger_duplicates($name, $email);
+	$skipped = [];
+	
+	if ($check['duplicate']) {
+		// Safely encode duplicates using "|" as separator
+		$error_items = implode('|', $check['duplicates']);
+		
+		$redirect_url = home_url('/vertegenwoordigers/');
+		$redirect_url = add_query_arg('error', 'duplicate', $redirect_url);
+		$redirect_url = add_query_arg('skipped', urlencode($error_items), $redirect_url);
+		
+		wp_redirect($redirect_url);
+		exit;
+	}
+
 	// Add post to custom post type 'vertegenwoordiger'
 	$post_id = wp_insert_post([
 		'post_type' => 'vertegenwoordiger',
@@ -419,6 +435,7 @@ add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);
 
 // =============== CSV UPLOAD =================
 // ============ PROCESS CSV FILE ==============
+// === PROCESS CSV FILE ===
 function handle_csv_upload() {
 	// Check nonce for security
 	if (!isset($_POST['csv_upload_nonce']) || !wp_verify_nonce($_POST['csv_upload_nonce'], 'csv_upload_action')) {
@@ -440,6 +457,7 @@ function handle_csv_upload() {
 	
 	$handle = fopen($file['tmp_name'], 'r'); // Open the file for reading
 	$row = 0;
+	$duplicates = []; // Array to collect all duplicates
 	
 	if ($handle !== false) {
 		while (($data = fgetcsv($handle, 1000, ';')) !== false) {
@@ -453,6 +471,44 @@ function handle_csv_upload() {
 			$name = sanitize_text_field($data[0]); // Sanitize name field
 			$email = sanitize_email($data[1]); // Sanitize email field
 			$region = ucfirst(strtolower(sanitize_text_field($data[2]))); // Decapitalize value > Capitalise first letter > Sanitize field
+			
+			// Check for duplicate name
+			$existing_name = get_posts([
+				'post_type' => 'vertegenwoordiger',
+				'posts_per_page' => 1,
+				'meta_query' => [
+					['key' => 'vertegenwoordiger_name', 'value' => $name, 'compare' => '=']
+				]
+			]);
+			
+			// Check for duplicate email
+			$existing_email = get_posts([
+				'post_type' => 'vertegenwoordiger',
+				'posts_per_page' => 1,
+				'meta_query' => [
+					['key' => 'vertegenwoordiger_email', 'value' => $email, 'compare' => '=']
+				]
+			]);
+			
+			// If either or both are duplicates, skip and set reason
+			if (!empty($existing_name) || !empty($existing_email)) {
+				if (!empty($existing_name) && !empty($existing_email)) {
+					$reason = 'naam en e-mail al bestaan';
+				} elseif (!empty($existing_name)) {
+					$reason = 'naam al bestaat';
+				} else {
+					$reason = 'e-mail bestaat al';
+				}
+				
+				$duplicates[] = [
+					'name' => $name,
+					'email' => $email,
+					'reason' => $reason
+				];
+				
+				$row++;
+				continue; // Skip insertion
+			}
 			
 			// Generate the unique timestamp for this post
 			$unique_timestamp = time() + $row;
@@ -478,8 +534,128 @@ function handle_csv_upload() {
 		fclose($handle);
 	}
 	
+	// Redirect with duplicate info (if any)
+	if (!empty($duplicates)) {
+		$names = array_map(fn($d) => $d['name'], $duplicates);
+		$emails = array_map(fn($d) => $d['email'], $duplicates);
+		$reasons = array_map(fn($d) => $d['reason'], $duplicates);
+		
+		$url = add_query_arg([
+			'error' => 'duplicate',
+			'names' => urlencode(implode('|', $names)),
+			'emails' => urlencode(implode('|', $emails)),
+			'reasons' => urlencode(implode('|', $reasons))
+		], home_url('/vertegenwoordigers'));
+		
+		wp_redirect($url); 
+		exit;
+	}
+	
 	wp_redirect($_SERVER['HTTP_REFERER']); // Redirect user back to previous page
 	exit;
 }
 add_action('admin_post_process_csv_upload', 'handle_csv_upload');
 // ==========================================
+
+// ============ DUPLICATE CHECK =============
+// === DUPLICATE NAME AND/OR E-MAIL CHECK ===
+function check_vertegenwoordiger_duplicates($name, $email) {
+	$duplicates = []; // List for what is duplicate
+	$duplicate_names = []; // List for duplicate names
+	$duplicate_emails = []; // List for duplicate emails
+	$duplicate_reasons = []; // List for the reasons
+	
+	// Check for duplicate name
+	$existing_name = get_posts([
+		'post_type' => 'vertegenwoordiger',
+		'posts_per_page' => 1,
+		'meta_query' => [
+			['key' => 'vertegenwoordiger_name', 'value' => $name, 'compare' => '=']
+		]
+	]);
+	
+	if (!empty($existing_name)) {
+		$duplicates[] = 'naam';
+		$duplicate_names[] = $name; // Store the duplicate name
+	}
+	
+	// Check for duplicate email
+	$existing_email = get_posts([
+		'post_type' => 'vertegenwoordiger',
+		'posts_per_page' => 1,
+		'meta_query' => [
+			['key' => 'vertegenwoordiger_email', 'value' => $email, 'compare' => '=']
+		]
+	]);
+	
+	if (!empty($existing_email)) {
+		$duplicates[] = 'e-mail';
+		$duplicate_emails[] = $email; // Store the duplicate email
+	}
+	
+	// If both name and email are found, modify the reason to show both
+	if (!empty($existing_name) && !empty($existing_email)) {
+		$duplicate_reasons[] = 'naam en e-mail al bestaan';
+	} else {
+		// Otherwise, use the individual reasons
+		if (!empty($existing_name)) {
+			$duplicate_reasons[] = 'naam al bestaat';
+		}
+		if (!empty($existing_email)) {
+			$duplicate_reasons[] = 'e-mail al bestaat';
+		}
+	}
+	
+	// If duplicates are found, log them in the URL
+	if (!empty($duplicates)) {
+		$duplicate_items = implode(', ', $duplicates); // naam|e-mail
+		$duplicate_names_string = implode('|', $duplicate_names); // "John Doe|Jane Doe"
+		$duplicate_emails_string = implode('|', $duplicate_emails); // "johndoe@example.com|janedoe@example.com"
+		$duplicate_reasons_string = implode('|', $duplicate_reasons); // "naam|e-mail|naam en e-mail bestaan al"
+		
+		// Generate error url
+		$url = add_query_arg([
+			'error' => 'duplicate',
+			'names' => urlencode($duplicate_names_string),
+			'emails' => urlencode($duplicate_emails_string),
+			'reasons' => urlencode($duplicate_reasons_string)
+		], wp_get_referer());
+		
+		wp_redirect($url);
+		exit;
+	}
+	
+	return ['duplicate' => !empty($duplicates), 'name' => $name, 'email' => $email, 'reason' => implode(' en ', $duplicates) . ' bestaan al'];
+}
+
+// === DUPLICATE ERROR SHORTCODE ===
+function duplicate_modal_shortcode($atts) {
+	// Get and sanitize query string parameters
+	$names = isset($_GET['names']) ? explode('|', sanitize_text_field($_GET['names'])) : [];
+	$emails = isset($_GET['emails']) ? explode('|', sanitize_text_field($_GET['emails'])) : [];
+	$reasons = isset($_GET['reasons']) ? explode('|', sanitize_text_field($_GET['reasons'])) : [];
+	
+	// Build error modal
+	ob_start(); ?>
+	<?php if (!empty($names)) : ?>
+	<div id="error-modal" class="modal-overlay" style="display: none;">
+		<div class="modal-box">
+			<h3>Deze items zijn overgeslagen i.v.m. duplicaties:</h3>
+			<p class="modal-message">
+				<?php foreach ($names as $key => $name): ?>
+					<?php
+						$email = isset($emails[$key]) ? $emails[$key] : '';
+						$reason = isset($reasons[$key]) ? $reasons[$key] : 'al in gebruik';
+					?>
+				<strong><?php echo esc_html($name); ?></strong>
+				<?php if (!empty($email)) echo ' <strong>(' . esc_html($email) . ')</strong>'; ?> is overgeslagen omdat deze <strong><?php echo esc_html($reason); ?></strong>.
+				<?php if ($key < count($names) - 1) echo '<br>'; ?>
+				<?php endforeach; ?>
+			</p>
+			<button id="modal-ok" class="modal-button">OK</button>
+		</div>
+	</div>
+	<?php endif;
+	return ob_get_clean();
+}
+add_shortcode('duplicate_modal', 'duplicate_modal_shortcode');

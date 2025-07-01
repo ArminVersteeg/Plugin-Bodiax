@@ -122,3 +122,70 @@ function custom_override_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	
 	return $avatar;
 }
+
+// === UPDATE PASSWORD SECTION SHORTCODE ===
+add_shortcode('update_password_form', 'custom_update_password_form_shortcode');
+function custom_update_password_form_shortcode() {
+	if (!is_user_logged_in()) return '<p>Please log in to change your password.</p>'; // Show error when no user is logged in
+	
+	ob_start(); ?>
+	<form id="password-update-form">
+		<div class="password-update-field">
+			<label>Huidig wachtwoord:<br>
+				<input type="password" name="current_password" required>
+			</label>
+		</div>
+		<div class="password-update-field">
+			<label>Nieuw wachtwoord:<br>
+				<input type="password" name="new_password" required>
+			</label>
+		</div>
+		<div class="password-update-field">
+			<label>Bevestig nieuw wachtwoord:<br>
+				<input type="password" name="confirm_new_password" required>
+			</label>
+		</div>
+		<div class="password-update-submit">
+			<button class="custom-button" type="submit">Wachtwoord bijwerken</button>
+			<p id="password-update-status" style="margin-top: 10px;"></p>
+		</div>
+	</form>
+	<?php return ob_get_clean();
+}
+
+// === HANDLE PASSWORD UPDATE AJAX ===
+add_action('wp_ajax_custom_update_password', 'handle_custom_update_password');
+function handle_custom_update_password() {
+	check_ajax_referer('custom_update_password', 'security');
+	
+	if (!is_user_logged_in()) {
+		wp_send_json_error(['message' => 'Je bent niet ingelogd.']);
+	}
+	
+	$user = wp_get_current_user();
+	$current_password = $_POST['current_password'] ?? '';
+	$new_password = $_POST['new_password'] ?? '';
+	$confirm_password = $_POST['confirm_new_password'] ?? '';
+	
+	if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
+		wp_send_json_error(['message' => 'Vul alle velden in.']);
+	}
+	
+	if ($new_password !== $confirm_password) {
+		wp_send_json_error(['message' => 'Nieuwe wachtwoorden komen niet overeen.']);
+	}
+	
+	if (!wp_check_password($current_password, $user->user_pass, $user->ID)) {
+		wp_send_json_error(['message' => 'Huidig wachtwoord is onjuist.']);
+	}
+	
+	// Optional: check strength
+	if (strlen($new_password) < 6) {
+		wp_send_json_error(['message' => 'Wachtwoord moet minstens 6 tekens lang zijn.']);
+	}
+	
+	wp_set_password($new_password, $user->ID);
+	wp_set_auth_cookie($user->ID, true);
+	
+	wp_send_json_success(['message' => 'Wachtwoord succesvol bijgewerkt.']);
+}

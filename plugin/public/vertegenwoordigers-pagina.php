@@ -1,4 +1,5 @@
 <?php
+// =============== CRUD =================
 // === "NEW" BUTTON SHORTCODE ===
 function toggle_buttons_and_containers() {
 	// Build button container
@@ -306,3 +307,68 @@ function handle_vertegenwoordiger_delete() {
 	wp_redirect(home_url('/vertegenwoordigers'));
 	exit;
 }
+// ============================================
+
+// ================== AJAX ====================
+add_action('wp_ajax_search_vertegenwoordigers', 'search_vertegenwoordigers_ajax');
+add_action('wp_ajax_nopriv_search_vertegenwoordigers', 'search_vertegenwoordigers_ajax');
+
+function search_vertegenwoordigers_ajax() {
+	$search = sanitize_text_field($_POST['search'] ?? '');
+	$page = max(1, intval($_POST['page'] ?? 1));
+	
+	// Build the query arguments
+	$query_args = [
+		'post_type' => 'vertegenwoordiger',
+		'paged' => $page,
+		'meta_query' => [
+			'relation' => 'OR',
+			['key' => 'vertegenwoordiger_name', 'value' => $search, 'compare' => 'LIKE'],
+			['key' => 'vertegenwoordiger_email', 'value' => $search, 'compare' => 'LIKE'],
+			['key' => 'vertegenwoordiger_region', 'value' => $search, 'compare' => 'LIKE'],
+			['key' => 'vertegenwoordiger_custom_id', 'value' => $search, 'compare' => 'LIKE'],
+		],
+	];
+	
+	// Run the query
+	$query = new WP_Query($query_args);
+	
+	// Build empty table if no results
+	if (!$query->have_posts()) {
+		$html = '<table class="vertegenwoordigers-table" style="border-collapse: collapse;">
+					<thead>
+						<tr class="vertegenwoordigers-table-row">
+							<th style="width: 30%;">Naam</th>
+							<th style="width: 30%;">E-mail</th>
+							<th style="width: 25%;">Regio</th>
+							<th style="width: 10%;">ID</th>
+							<th style="width: 5%;"></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+					</table>
+					<div class="error-container">
+						<p class="error-message">Geen vertegenwoordigers gevonden.</p>
+					</div>';
+		
+		echo $html;
+		wp_die();
+	}
+}
+
+// === APPLY SEARCH FILTER ===
+function filter_vertegenwoordiger_post_title($where, $wp_query) {
+	if (!is_admin() && $wp_query->get('post_type') === 'vertegenwoordiger') {
+		global $wpdb;
+		
+		// Get the search term
+		$search = $wp_query->get('s');
+		
+		if (!empty($search)) {
+			$where .= " AND {$wpdb->posts}.post_title LIKE '%" . esc_sql($search) . "%'";
+		}
+	}
+	return $where;
+}
+add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);

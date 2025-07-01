@@ -5,6 +5,34 @@
 	--color-border: #57575757;
 }
 
+/* Searchbar styling */
+.vertegenwoordigers-search-container {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 15px;
+}
+
+#vertegenwoordigers-search {
+	border-radius: 7px;
+	height: 30px;
+	width: 40%;
+}
+/* Searchbar END */
+
+/* No result error styling */
+.error-container {
+	background-color: #ffeceb;
+	border: 1px solid #eb4034;
+	margin: 5px 0px;
+	padding: 10px 0px;
+}
+
+.error-message {
+	color: #eb4034;
+	margin: 0px 10px;
+}
+/* No result error END*/
+
 /* CRUD Form and Table styling */
 .vertegenwoordigers-form {
 	display: flex;

@@ -78,3 +78,35 @@
 	color: var(--color-dark) !important;
 }
 /* CRUD Form and Table END */
+
+/* Pagination styling */
+.vertegenwoordiger-pagination {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: right;
+	gap: 0.2em;
+	margin-top: 0.3em;
+}
+
+.vertegenwoordiger-pagination button {
+	padding: 0.2em 0.5em;
+	background: transparent;
+	color: var(--color-primary);
+	border: none;
+	cursor: pointer;
+	font-weight: 500;
+}
+
+.vertegenwoordiger-pagination button:hover,
+.vertegenwoordiger-pagination button.current {
+	background: var(--color-primary);
+	color: white;
+	border-radius: 7px;
+}
+
+.vertegenwoordiger-pagination .dots {
+	padding: 0.2em 0.2em;
+	color: var(--color-primary);
+	font-weight: bold;
+}
+/* Pagination END */

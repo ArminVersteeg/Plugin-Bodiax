@@ -213,22 +213,6 @@ function handle_vertegenwoordiger_create() {
 	if (!$name || !is_email($email) || !$region) {
 		wp_die('Ongeldige invoer');
 	}
-	
-	// Run duplicates check
-	$check = check_vertegenwoordiger_duplicates($name, $email);
-	$skipped = [];
-	
-	if ($check['duplicate']) {
-		// Safely encode duplicates using "|" as separator
-		$error_items = implode('|', $check['duplicates']);
-		
-		$redirect_url = home_url('/vertegenwoordigers/');
-		$redirect_url = add_query_arg('error', 'duplicate', $redirect_url);
-		$redirect_url = add_query_arg('skipped', urlencode($error_items), $redirect_url);
-		
-		wp_redirect($redirect_url);
-		exit;
-	}
 
 	// Add post to custom post type 'vertegenwoordiger'
 	$post_id = wp_insert_post([
@@ -316,10 +300,12 @@ add_action('wp_ajax_nopriv_search_vertegenwoordigers', 'search_vertegenwoordiger
 function search_vertegenwoordigers_ajax() {
 	$search = sanitize_text_field($_POST['search'] ?? '');
 	$page = max(1, intval($_POST['page'] ?? 1));
+	$per_page = 10;
 	
 	// Build the query arguments
 	$query_args = [
 		'post_type' => 'vertegenwoordiger',
+		'posts_per_page' => $per_page,
 		'paged' => $page,
 		'meta_query' => [
 			'relation' => 'OR',
@@ -355,6 +341,51 @@ function search_vertegenwoordigers_ajax() {
 		echo $html;
 		wp_die();
 	}
+
+	// Output the results in table format
+	echo vertegenwoordiger_table_html($query->posts);
+	
+	// Pagination
+	$total = $query->found_posts;
+	$total_pages = ceil($total / $per_page);
+	
+	if ($total_pages > 1) {
+		echo '<div class="vertegenwoordiger-pagination">';
+		
+		if ($page > 1) {
+			echo '<button class="vertegenwoordiger-page-btn" data-page="' . ($page - 1) . '">‹</button>';
+		}
+		
+		if ($page > 2) {
+			echo '<button class="vertegenwoordiger-page-btn" data-page="1">1</button>';
+			if ($page > 3) {
+				echo '<span class="dots">...</span>';
+			}
+		}
+		
+		for ($i = max(1, $page - 1); $i <= min($total_pages, $page + 1); $i++) {
+			if ($i == $page) {
+				echo '<button class="current" disabled>' . $i . '</button>';
+			} else {
+				echo '<button class="vertegenwoordiger-page-btn" data-page="' . $i . '">' . $i . '</button>';
+			}
+		}
+		
+		if ($page < $total_pages - 1) {
+			if ($page < $total_pages - 2) {
+				echo '<span class="dots">...</span>';
+			}
+			echo '<button class="vertegenwoordiger-page-btn" data-page="' . $total_pages . '">' . $total_pages . '</button>';
+		}
+		
+		if ($page < $total_pages) {
+			echo '<button class="vertegenwoordiger-page-btn" data-page="' . ($page + 1) . '">›</button>';
+		}
+		
+		echo '</div>';
+	}
+	
+	wp_die();
 }
 
 // === APPLY SEARCH FILTER ===
@@ -372,3 +403,4 @@ function filter_vertegenwoordiger_post_title($where, $wp_query) {
 	return $where;
 }
 add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);
+// ============================================

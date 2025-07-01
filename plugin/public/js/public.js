@@ -30,7 +30,6 @@ let debounceTimeout;
 
 // Fetch search results
 function fetchResults(search = '', page = 1) {
-	showSpinner();
 	
 	const formData = new FormData();
 	formData.append('action', 'search_vertegenwoordigers');
@@ -44,10 +43,22 @@ function fetchResults(search = '', page = 1) {
 		.then(res => res.text())
 		.then(html => {
 		resultsContainer.innerHTML = html;
+		attachPaginationEvents();
 	})
 		.catch(err => {
 		console.error('AJAX error:', err);
 		resultsContainer.innerHTML = '<p>Er ging iets mis</p>';
+	});
+}
+
+// Pagination event listeners
+function attachPaginationEvents() {
+	document.querySelectorAll('.vertegenwoordiger-page-btn').forEach(button => {
+		button.addEventListener('click', function () {
+			const page = this.getAttribute('data-page');
+			const search = searchInput.value.trim();
+			fetchResults(search, page);
+		});
 	});
 }
 

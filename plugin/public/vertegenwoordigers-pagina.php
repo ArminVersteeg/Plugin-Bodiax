@@ -1,4 +1,15 @@
 <?php
+// === "NEW" BUTTON SHORTCODE ===
+function toggle_buttons_and_containers() {
+	// Build button container
+	ob_start(); ?>
+	<div class="toggle-button-container">
+		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
+	</div>
+	<?php return ob_get_clean();
+}
+add_shortcode('toggle_buttons_and_containers', 'toggle_buttons_and_containers');
+
 // === CREATE FORM SHORTCODE ===
 function vertegenwoordiger_form_shortcode() {
 	// Build form

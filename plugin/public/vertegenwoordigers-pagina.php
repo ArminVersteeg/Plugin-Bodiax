@@ -6,6 +6,12 @@ function toggle_buttons_and_containers() {
 	ob_start(); ?>
 	<div class="toggle-button-container">
 		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
+		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="action" value="process_csv_upload">
+			<?php wp_nonce_field('csv_upload_action', 'csv_upload_nonce'); ?>
+			<input type="file" style="display: none;" name="csv_file" id="csv_file" required>
+			<button class="toggle-button custom-button" type="button" id="upload-button">Upload</button>
+		</form>
 	</div>
 	<?php return ob_get_clean();
 }

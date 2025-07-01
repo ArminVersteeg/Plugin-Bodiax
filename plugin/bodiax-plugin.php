@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bodiax
  * Description: Custom CRUD's for dealers and representatives, also adds small other functions/widgets. Created for the Bodiax dealerportal.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Armin Versteeg
 */
 

@@ -151,3 +151,38 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 });
+
+// Profile dropdown variables
+const avatar = document.getElementById('user-avatar');
+const dropdown = document.getElementById('profile-dropdown');
+
+// User profile dropdown
+if (avatar && dropdown) {
+	avatar.addEventListener('click', function () {
+		dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	});
+	
+	document.addEventListener('click', function (e) {
+		if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+			dropdown.style.display = 'none';
+		}
+	});
+}
+
+// Ajax listener for profile page
+const formData = new FormData(document.getElementById('profile-edit-form'));
+formData.append('action', 'save_profile_edits');
+formData.append('security', profileEditData.nonce);
+
+fetch(profileEditData.ajaxUrl, {
+	method: 'POST',
+	body: formData,
+})
+	.then(response => response.json())
+	.then(data => {
+	if (data.success) {
+		console.log('Success!');
+	} else {
+		console.error('Error:', data.data.message);
+	}
+});

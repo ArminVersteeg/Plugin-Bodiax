@@ -1,10 +1,11 @@
 /* General styling*/
 :root {
 	--color-primary: #b25f35;
-	--color-accent: #e99d20;
+	--color-accent: #de8457;
 	--color-dark: #233452;
 	--color-border: #57575757;
 	--error-red: #eb4034;
+	--error-bg-red: #ffeceb;
 }
 
 /* Searchbar styling */
@@ -23,7 +24,7 @@
 
 /* No result error styling */
 .error-container {
-	background-color: #ffeceb;
+	background-color: var(--error-bg-red);
 	border: 1px solid var(--error-red);
 	margin: 5px 0px;
 	padding: 10px 0px;
@@ -242,8 +243,8 @@
 }
 
 .custom-button:hover {
-	background-color: #de8457;
-	border-color: #de8457;
+	background-color: var(--color-accent);
+	border-color: var(--color-accent);
 	color: white;
 }
 
@@ -254,3 +255,59 @@
 	gap: 10px;
 }
 /* Buttons END */
+
+/* Profile page styling */
+#change-logo-button {
+	border-color: #dbdbdb;
+	background-color: white;
+	color: black;
+}
+
+#change-logo-button:hover {
+	background-color: rgb(249 250 251);
+}
+
+.saved-status-success {
+	background-color: #c2f5bb;
+	border: 1px solid #266f26;
+	color: #266f26;
+	width: 25rem;
+	padding: 10px 20px;
+}
+
+.saved-status-failed {
+	background-color: var(--error-bg-red);
+	border: 1px solid var(--error-red);
+	color: var(--error-red);
+	width: 25rem;
+	padding: 10px 20px;
+}
+
+#profile-edit-form div label input, #password-update-form div label input {
+	border-radius: 7px;
+	padding: .5rem .75rem;
+	height: 40px;
+	width: 100%
+}
+
+#profile-edit-form div label, #password-update-form div label {
+	width: 100%;
+	margin-top: 15px;
+}
+
+.profile-edit-submit-container button, .password-update-submit button {
+	float: right;
+	border: none;
+	background-color: black;
+	color: white;
+}
+
+#avatar-preview {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	display: block;
+	object-fit: cover;
+	margin-bottom: 8px;
+}
+/* Profile page END */

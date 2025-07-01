@@ -1,6 +1,6 @@
 <?php
-// =============== CRUD =================
-// === "NEW" BUTTON SHORTCODE ===
+// ================ CRUD =================
+// === "NEW" + UPLOAD BUTTON SHORTCODE ===
 function toggle_buttons_and_containers() {
 	// Build button container
 	ob_start(); ?>
@@ -10,7 +10,12 @@ function toggle_buttons_and_containers() {
 			<input type="hidden" name="action" value="process_csv_upload">
 			<?php wp_nonce_field('csv_upload_action', 'csv_upload_nonce'); ?>
 			<input type="file" style="display: none;" name="csv_file" id="csv_file" required>
-			<button class="toggle-button custom-button" type="button" id="upload-button">Upload</button>
+			<button class="toggle-button custom-button" type="button" id="upload-button">
+				<svg aria-hidden="true" id="csv-upload-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+					<path d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">
+					</path>
+				</svg>
+			</button>
 		</form>
 	</div>
 	<?php return ob_get_clean();

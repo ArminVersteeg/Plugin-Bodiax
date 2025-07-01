@@ -1,11 +1,22 @@
 <?php
-// =============== CRUD =================
-// === "NEW" BUTTON SHORTCODE ===
+// ================ CRUD =================
+// === "NEW" + UPLOAD BUTTON SHORTCODE ===
 function toggle_buttons_and_containers() {
 	// Build button container
 	ob_start(); ?>
 	<div class="toggle-button-container">
 		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
+		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="action" value="process_csv_upload">
+			<?php wp_nonce_field('csv_upload_action', 'csv_upload_nonce'); ?>
+			<input type="file" style="display: none;" name="csv_file" id="csv_file" required>
+			<button class="toggle-button custom-button" type="button" id="upload-button">
+				<svg aria-hidden="true" id="csv-upload-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+					<path d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">
+					</path>
+				</svg>
+			</button>
+		</form>
 	</div>
 	<?php return ob_get_clean();
 }
@@ -404,3 +415,71 @@ function filter_vertegenwoordiger_post_title($where, $wp_query) {
 }
 add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);
 // ============================================
+
+
+// =============== CSV UPLOAD =================
+// ============ PROCESS CSV FILE ==============
+function handle_csv_upload() {
+	// Check nonce for security
+	if (!isset($_POST['csv_upload_nonce']) || !wp_verify_nonce($_POST['csv_upload_nonce'], 'csv_upload_action')) {
+		wp_die('Security check failed.');
+	}
+	
+	// Check if a file has been uploaded
+	if (empty($_FILES['csv_file']['tmp_name'])) {
+		wp_die('No file uploaded.');
+	}
+	
+	// Get the uploaded file
+	$file = $_FILES['csv_file'];
+	
+	// Check if it's a valid CSV file
+	if ($file['type'] !== 'text/csv' && $file['type'] !== 'application/vnd.ms-excel') {
+		wp_die('Invalid file type. Please upload a CSV file.');
+	}
+	
+	$handle = fopen($file['tmp_name'], 'r'); // Open the file for reading
+	$row = 0;
+	
+	if ($handle !== false) {
+		while (($data = fgetcsv($handle, 1000, ';')) !== false) {
+			// Skip row 0
+			if ($row === 0) {
+				$row++;
+				continue;
+			}
+			
+			// Parse the CSV data
+			$name = sanitize_text_field($data[0]); // Sanitize name field
+			$email = sanitize_email($data[1]); // Sanitize email field
+			$region = ucfirst(strtolower(sanitize_text_field($data[2]))); // Decapitalize value > Capitalise first letter > Sanitize field
+			
+			// Generate the unique timestamp for this post
+			$unique_timestamp = time() + $row;
+			
+			// Insert the data into the custom post type 'vertegenwoordiger'
+			$post_id = wp_insert_post([
+				'post_type' => 'vertegenwoordiger',
+				'post_status' => 'publish',
+				'post_title' => $name,
+				'post_date' => date('Y-m-d H:i:s', $unique_timestamp), // Set the unique post date and time
+			]);
+			
+			if ($post_id) {
+				update_post_meta($post_id, 'vertegenwoordiger_name', $name);
+				update_post_meta($post_id, 'vertegenwoordiger_email', $email);
+				update_post_meta($post_id, 'vertegenwoordiger_region', $region);
+				$custom_id = generate_unique_custom_id($region);
+				update_post_meta($post_id, 'vertegenwoordiger_custom_id', $custom_id);
+			}
+			
+			$row++;
+		}
+		fclose($handle);
+	}
+	
+	wp_redirect($_SERVER['HTTP_REFERER']); // Redirect user back to previous page
+	exit;
+}
+add_action('admin_post_process_csv_upload', 'handle_csv_upload');
+// ==========================================

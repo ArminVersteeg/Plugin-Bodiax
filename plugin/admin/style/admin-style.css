@@ -1,0 +1,26 @@
+#vertegenwoordiger_meta_box .form-group-vertegenwoordigers {
+	display: flex;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+#vertegenwoordiger_meta_box label {
+	width: 120px;
+	font-weight: bold;
+	margin-right: 10px;
+}
+
+#vertegenwoordiger_meta_box input,
+#vertegenwoordiger_meta_box select {
+	flex: 1;
+	padding: 6px;
+	font-size: 14px;
+}
+
+#vertegenwoordiger_meta_box {
+	max-width: 500px;
+}
+
+.postbox .inside {
+	padding: 12px;
+}

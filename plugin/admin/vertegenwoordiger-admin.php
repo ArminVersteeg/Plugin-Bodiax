@@ -25,7 +25,7 @@ function register_vertegenwoordiger_post_type() {
 }
 add_action('init', 'register_vertegenwoordiger_post_type');
 
-// Hook to add meta box
+// Vertegenwoordigers details
 add_action('add_meta_boxes', function () {
 	add_meta_box(
 		'vertegenwoordiger_details',
@@ -105,9 +105,56 @@ function save_vertegenwoordiger_meta($post_id) {
 		$region = sanitize_text_field($_POST['vertegenwoordiger_region']);
 		update_post_meta($post_id, 'vertegenwoordiger_region', $region);
 
-		// Now update the custom ID based on region:
-		// Assume generate_unique_custom_id is your function for creating IDs based on region
+		// Update the custom ID based on region
 		$custom_id = generate_unique_custom_id($region);
 		update_post_meta($post_id, 'vertegenwoordiger_custom_id', $custom_id);
 	}
+}
+
+// === CSV UPLOAD ===
+// Submenu
+add_action('admin_menu', function () {
+	add_submenu_page(
+		'edit.php?post_type=vertegenwoordiger',
+		'CSV Upload',
+		'CSV Upload',
+		'manage_options',
+		'vertegenwoordiger-csv-upload',
+		'render_csv_upload_page'
+	);
+});
+
+
+function render_csv_upload_page() {
+	// Build CSV Form container
+	?>
+	<div class="wrap">
+		<h1>CSV Upload voor Vertegenwoordigers</h1><br>
+		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="action" value="process_csv_upload">
+			<?php wp_nonce_field('csv_upload_action', 'csv_upload_nonce'); ?>
+			<input type="file" style="display: none;" name="csv_file" id="csv_file" required>
+			<button class="toggle-button custom-button csv-button" type="button" id="upload-button">Upload</button>
+		</form>
+	</div>
+	<script>
+		// CSV Upload hidden form
+		const uploadButton = document.getElementById('upload-button');
+		const csvInput = document.getElementById('csv_file');
+
+		if (uploadButton && csvInput) {
+			// When the "Upload" button is clicked, trigger the hidden file input
+			uploadButton.addEventListener('click', function () {
+				csvInput.click();
+			});
+
+			// When the file is selected, automatically submit the form
+			csvInput.addEventListener('change', function () {
+				if (this.files.length > 0) {
+					this.form.submit(); // Automatically submit the form
+				}
+			});
+		}
+	</script>
+	<?php
 }

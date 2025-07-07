@@ -1,3 +1,8 @@
+:root {
+	--color-primary: #b25f35;
+	--color-accent: #de8457;
+}
+
 #vertegenwoordiger_meta_box .form-group-vertegenwoordigers {
 	display: flex;
 	align-items: center;
@@ -23,4 +28,24 @@
 
 .postbox .inside {
 	padding: 12px;
+}
+
+.custom-button {
+	padding: 5px 20px;
+	border-radius: 7px;
+	letter-spacing: 2px;
+	font-size: 13px;
+	background-color: var(--color-primary);
+	border: 0px;
+	color: white;
+}
+
+.custom-button:hover {
+	background-color: var(--color-accent);
+	border-color: var(--color-accent);
+	color: white;
+}
+
+.csv-button:hover {
+	cursor: pointer;
 }

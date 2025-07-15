@@ -4,11 +4,11 @@
 function dealer_toggle_buttons_and_containers() {
 	// Build button container
 	ob_start(); ?>
-	<div class="toggle-button-container">
+	<div class="toggle-buttons-container">
 		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
-		<form class="csv-upload-form" action="" method="POST" enctype="multipart/form-data">
+		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="action" value="process_csv_upload">
-			<?php  ?>
+			<?php wp_nonce_field('csv_upload_action', 'csv_upload_nonce'); ?>
 			<input type="file" style="display: none;" name="csv_file" id="csv_file" required>
 			<button class="toggle-button custom-button" type="button" id="upload-button">
 				<svg aria-hidden="true" id="csv-upload-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -206,7 +206,7 @@ function handle_dealer_create() {
     $province = sanitize_text_field($_POST['dealer_province']);
 	
 	// Validate input fields: If invalid, stop
-	if (!$name || !is_email($email) || !$adress || $zipcode  || $city || $province) {
+	if (!$name || !is_email($email) || !$adress || !$zipcode  || !$city || !$province) {
 		wp_die('Ongeldige invoer');
 	}
 	
@@ -225,7 +225,7 @@ function handle_dealer_create() {
 		wp_redirect($redirect_url);
 		exit;
 	}
-
+	
 	// Add post to custom post type 'dealer'
 	$post_id = wp_insert_post([
 		'post_type' => 'dealer',
@@ -237,9 +237,9 @@ function handle_dealer_create() {
 		update_post_meta($post_id, 'dealer_name', $name);
 		update_post_meta($post_id, 'dealer_email', $email);
 		update_post_meta($post_id, 'dealer_adress', $adress);
-        update_post_meta($post_id, 'dealer_zipcode', $zipcode);
+		update_post_meta($post_id, 'dealer_zipcode', $zipcode);
 		update_post_meta($post_id, 'dealer_city', $city);
-        update_post_meta($post_id, 'dealer_province', $province);
+		update_post_meta($post_id, 'dealer_province', $province);
 	}
 	
 	wp_redirect(home_url('/dealers'));
@@ -265,16 +265,16 @@ function handle_dealer_update() {
 	$name = sanitize_text_field($_POST['dealer_name']);
 	$email = sanitize_email($_POST['dealer_email']);
 	$adress = sanitize_text_field($_POST['dealer_adress']);
-    $zipcode = sanitize_text_field($_POST['dealer_zipcode']);
-    $city= sanitize_text_field($_POST['dealer_city']);
-    $province = sanitize_text_field($_POST['dealer_province']);
+	$zipcode = sanitize_text_field($_POST['dealer_zipcode']);
+	$city= sanitize_text_field($_POST['dealer_city']);
+	$province = sanitize_text_field($_POST['dealer_province']);
 	
 	update_post_meta($post_id, 'dealer_name', $name);
-    update_post_meta($post_id, 'dealer_email', $email);
-    update_post_meta($post_id, 'dealer_adress', $adress);
-    update_post_meta($post_id, 'dealer_zipcode', $zipcode);
-    update_post_meta($post_id, 'dealer_city', $city);
-    update_post_meta($post_id, 'dealer_province', $province);
+	update_post_meta($post_id, 'dealer_email', $email);
+	update_post_meta($post_id, 'dealer_adress', $adress);
+	update_post_meta($post_id, 'dealer_zipcode', $zipcode);
+	update_post_meta($post_id, 'dealer_city', $city);
+	update_post_meta($post_id, 'dealer_province', $province);
 	
 	wp_redirect(home_url('/dealers'));
 	exit;
@@ -480,18 +480,6 @@ function handle_dealer_csv_upload() {
 					['key' => 'dealer_email', 'value' => $email, 'compare' => '=']
 				]
 			]);
-
-            // !!!!!!! ASK IF NEEDED??? DEL IF NO :) !!!!!!!!
-            $existing_adress = get_posts([
-                'post_type' => 'dealer',
-                'posts_per_page'=> 1,
-                'meta_query' => [
-                    ['key' => 'dealer_adress', 'value' => $adress, 'compare' => '=']
-                    ['key' => 'dealer_zipcode', 'value' => $zipcode, 'compare' => '=']
-                    ['key' => 'dealer_city', 'value' => $city, 'compare' => '=']
-                    ['key' => 'dealer_province', 'value' => $province, 'compare' => '=']
-                ]
-            ]);
 			
 			// If either or both are duplicates, skip and set reason
 			if (!empty($existing_name) || !empty($existing_email)) {
@@ -558,6 +546,6 @@ function handle_dealer_csv_upload() {
 	wp_redirect($_SERVER['HTTP_REFERER']); // Redirect user back to previous page
 	exit;
 }
-add_action('admin_post_process_csv_upload', 'handle_csv_upload');
+add_action('admin_post_process_csv_upload', 'handle_dealer_csv_upload');
 // ==========================================
 

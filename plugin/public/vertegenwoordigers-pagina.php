@@ -4,7 +4,7 @@
 function toggle_buttons_and_containers() {
 	// Build button container
 	ob_start(); ?>
-	<div class="toggle-button-container">
+	<div class="toggle-buttons-container">
 		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
 		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="action" value="process_csv_upload">
@@ -127,9 +127,9 @@ function list_vertegenwoordigers_shortcode() {
 				<div id="custom-spinner" style="display: none;"></div>
 			</div>
 			<div class="vertegenwoordigers-search-container">
-				<input type="text" id="vertegenwoordigers-search" placeholder="Zoeken..." />
+				<input type="text" id="ajax-search" placeholder="Zoeken..." />
 			</div>
-			<div id="vertegenwoordiger-results">' 
+			<div id="ajax-results" data-action="search_vertegenwoordigers">' 
 				. vertegenwoordiger_table_html($entries) .
 			'</div>';
 	
@@ -282,6 +282,7 @@ function handle_vertegenwoordiger_update() {
 	$old_region = get_post_meta($id, 'vertegenwoordiger_region', true);
 	$old_custom_id = get_post_meta($id, 'vertegenwoordiger_custom_id', true);
 	
+	// Update post with new information
 	update_post_meta($id, 'vertegenwoordiger_name', $name);
 	update_post_meta($id, 'vertegenwoordiger_email', $email);
 	update_post_meta($id, 'vertegenwoordiger_region', $region);
@@ -380,11 +381,11 @@ function search_vertegenwoordigers_ajax() {
 		echo '<div class="vertegenwoordiger-pagination">';
 		
 		if ($page > 1) {
-			echo '<button class="vertegenwoordiger-page-btn" data-page="' . ($page - 1) . '">‹</button>';
+			echo '<button class="pagination-page-btn" data-page="' . ($page - 1) . '">‹</button>';
 		}
 		
 		if ($page > 2) {
-			echo '<button class="vertegenwoordiger-page-btn" data-page="1">1</button>';
+			echo '<button class="pagination-page-btn" data-page="1">1</button>';
 			if ($page > 3) {
 				echo '<span class="dots">...</span>';
 			}
@@ -394,7 +395,7 @@ function search_vertegenwoordigers_ajax() {
 			if ($i == $page) {
 				echo '<button class="current" disabled>' . $i . '</button>';
 			} else {
-				echo '<button class="vertegenwoordiger-page-btn" data-page="' . $i . '">' . $i . '</button>';
+				echo '<button class="pagination-page-btn" data-page="' . $i . '">' . $i . '</button>';
 			}
 		}
 		
@@ -402,11 +403,11 @@ function search_vertegenwoordigers_ajax() {
 			if ($page < $total_pages - 2) {
 				echo '<span class="dots">...</span>';
 			}
-			echo '<button class="vertegenwoordiger-page-btn" data-page="' . $total_pages . '">' . $total_pages . '</button>';
+			echo '<button class="pagination-page-btn" data-page="' . $total_pages . '">' . $total_pages . '</button>';
 		}
 		
 		if ($page < $total_pages) {
-			echo '<button class="vertegenwoordiger-page-btn" data-page="' . ($page + 1) . '">›</button>';
+			echo '<button class="pagination-page-btn" data-page="' . ($page + 1) . '">›</button>';
 		}
 		
 		echo '</div>';
@@ -545,7 +546,7 @@ function handle_csv_upload() {
 			'names' => urlencode(implode('|', $names)),
 			'emails' => urlencode(implode('|', $emails)),
 			'reasons' => urlencode(implode('|', $reasons))
-		], home_url('/vertegenwoordigers'));
+		], wp_get_referer());
 		
 		wp_redirect($url); 
 		exit;

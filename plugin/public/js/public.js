@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
 	// AJAX
 	// Search/AJAX Variables
-	const searchInput = document.getElementById('vertegenwoordigers-search');
-	const resultsContainer = document.getElementById('vertegenwoordiger-results');
+	const searchInput = document.getElementById('ajax-search');
+	const resultsContainer = document.getElementById('ajax-results');
 	const spinner = document.getElementById('custom-spinner');
 	const ajaxUrl = BodiaxData.ajaxUrl;
 	let debounceTimeout;
@@ -22,10 +22,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		showSpinner();
 
 		const formData = new FormData();
-		formData.append('action', 'search_vertegenwoordigers');
+		const dynamicAction = resultsContainer.dataset.action || 'search_vertegenwoordigers';
+
+		formData.append('action', dynamicAction);
 		formData.append('search', search);
 		formData.append('page', page);
-
+		
 		fetch(ajaxUrl, {
 			method: 'POST',
 			body: formData
@@ -46,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Pagination event listeners
 	function attachPaginationEvents() {
-		document.querySelectorAll('.vertegenwoordiger-page-btn').forEach(button => {
+		document.querySelectorAll('.pagination-page-btn').forEach(button => {
 			button.addEventListener('click', function () {
 				const page = this.getAttribute('data-page');
 				const search = searchInput.value.trim();

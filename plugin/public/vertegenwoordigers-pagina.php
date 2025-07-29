@@ -436,7 +436,6 @@ add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);
 
 // =============== CSV UPLOAD =================
 // ============ PROCESS CSV FILE ==============
-// === PROCESS CSV FILE ===
 function handle_csv_upload() {
 	// Check nonce for security
 	if (!isset($_POST['csv_upload_nonce']) || !wp_verify_nonce($_POST['csv_upload_nonce'], 'csv_upload_action')) {
@@ -453,7 +452,7 @@ function handle_csv_upload() {
 	
 	// Check if it's a valid CSV file
 	if ($file['type'] !== 'text/csv' && $file['type'] !== 'application/vnd.ms-excel') {
-		wp_die('Invalid file type. Please upload a CSV file.');
+		wp_die('Ongeldig bestandstype. Upload a.u.b. een CSV bestand.');
 	}
 	
 	$handle = fopen($file['tmp_name'], 'r'); // Open the file for reading
@@ -511,7 +510,7 @@ function handle_csv_upload() {
 				continue; // Skip insertion
 			}
 			
-			// Generate the unique timestamp for this post
+			// Generate the unique timestamp for each post
 			$unique_timestamp = time() + $row;
 			
 			// Insert the data into the custom post type 'vertegenwoordiger'
@@ -532,6 +531,7 @@ function handle_csv_upload() {
 			
 			$row++;
 		}
+		
 		fclose($handle);
 	}
 	
@@ -626,7 +626,11 @@ function check_vertegenwoordiger_duplicates($name, $email) {
 		exit;
 	}
 	
-	return ['duplicate' => !empty($duplicates), 'name' => $name, 'email' => $email, 'reason' => implode(' en ', $duplicates) . ' bestaan al'];
+	return [
+		'duplicate' => !empty($duplicates),
+		'name' => $name, 'email' => $email,
+		'reason' => implode(' en ', $duplicates) . ' bestaan al'
+	];
 }
 
 // === DUPLICATE ERROR SHORTCODE ===

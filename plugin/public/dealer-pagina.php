@@ -177,7 +177,7 @@ function handle_dealer_create() {
 	$email = sanitize_email($_POST['dealer_email']);
 	$address = sanitize_text_field($_POST['dealer_address']);
 
-	// Validate input fields: name, email, region. If invalid, stop
+	// Validate input fields: name, email, address. If invalid, stop
 	if (!$name || !is_email($email) || !$address) {
 		wp_die('Ongeldige invoer');
 	}
@@ -471,10 +471,10 @@ function handle_dealer_csv_upload() {
 				update_post_meta($post_id, 'dealer_email', $email);
 				update_post_meta($post_id, 'dealer_address', $address);
 			}
-
+			
 			$row++;
 		}
-
+		
 		fclose($handle);
 	}
 
@@ -516,7 +516,7 @@ function check_dealer_duplicates($name, $email) {
 		'posts_per_page' => 1,
 		'meta_query' => [
 			['key' => 'dealer_name', 'value' => $name, 'compare' => '=']
-		]
+		],
 	]);
 	
 	if (!empty($existing_name)) {
@@ -530,7 +530,7 @@ function check_dealer_duplicates($name, $email) {
 		'posts_per_page' => 1,
 		'meta_query' => [
 			['key' => 'dealer_email', 'value' => $email, 'compare' => '=']
-		]
+		],
 	]);
 	
 	if (!empty($existing_email)) {
@@ -563,7 +563,7 @@ function check_dealer_duplicates($name, $email) {
 			'error' => 'duplicate',
 			'names' => urlencode($duplicate_names_string),
 			'emails' => urlencode($duplicate_emails_string),
-			'reasons' => urlencode($duplicate_reasons_string)
+			'reasons' => urlencode($duplicate_reasons_string),
 		], wp_get_referer());
 		
 		wp_redirect($url);

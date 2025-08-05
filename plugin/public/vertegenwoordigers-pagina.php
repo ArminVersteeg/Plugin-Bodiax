@@ -478,7 +478,7 @@ function handle_csv_upload() {
 				'posts_per_page' => 1,
 				'meta_query' => [
 					['key' => 'vertegenwoordiger_name', 'value' => $name, 'compare' => '=']
-				]
+				],
 			]);
 			
 			// Check for duplicate email
@@ -487,7 +487,7 @@ function handle_csv_upload() {
 				'posts_per_page' => 1,
 				'meta_query' => [
 					['key' => 'vertegenwoordiger_email', 'value' => $email, 'compare' => '=']
-				]
+				],
 			]);
 			
 			// If either or both are duplicates, skip and set reason

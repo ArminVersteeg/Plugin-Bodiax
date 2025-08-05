@@ -1,13 +1,16 @@
 /* General styling*/
 :root {
 	--color-primary: #b25f35;
-	--color-accent: #de8457;
+	--color-secondary: #6d999f;
+	--color-accent: #e99d20;
 	--color-dark: #233452;
 	--color-border: #57575757;
 	--color-bg-light: #f3f4f6;
-	--error-red: #eb4034;
-	--error-bg-red: #ffeceb;
+	--color-white: #ffffff;
+	--color-grey: rgb(156 163 175);
 }
+
+
 /* Header profile stying */
 #header-widget-area {
 	margin-top: 2em;
@@ -48,7 +51,7 @@
 }
 
 .profile-dropdown p {
-	color: rgb(156 163 175);
+	color: var(--color-grey);
 	padding: 10px 20px;
 	font-size: 14px;
 	margin: 0px  50px 0px 0px !important;
@@ -66,32 +69,34 @@
 
 
 /* Searchbar styling */
-.vertegenwoordigers-search-container {
+.vertegenwoordigers-search-container, .dealer-search-container {
 	display: flex;
 	justify-content: flex-end;
 	margin-bottom: 15px;
 }
 
-#vertegenwoordigers-search {
+#ajax-search {
 	border-radius: 7px;
 	height: 30px;
 	width: 40%;
 }
 /* Searchbar END */
 
+
 /* No result error styling */
 .error-container {
-	background-color: var(--error-bg-red);
-	border: 1px solid var(--error-red);
+	background-color: #ffeceb;
+	border: 1px solid #eb4034;
 	margin: 5px 0px;
 	padding: 10px 0px;
 }
 
 .error-message {
-	color: var(--error-red);
+	color: #eb4034;
 	margin: 0px 10px;
 }
 /* No result error END*/
+
 
 /* Duplicate error styling */
 .modal-overlay {
@@ -106,7 +111,7 @@
 }
 
 .modal-box {
-	background: white;
+	background: var(--color-white);
 	padding: 20px 30px;
 	border-radius: 7px;
 	box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -130,18 +135,19 @@
 
 .modal-button:hover {
 	background-color: var(--color-accent);
-	color: white;
+	color: var(--color-white);
 }
 /* Duplicate error END */
 
+
 /* CRUD Form and Table styling */
-.vertegenwoordigers-form {
+.vertegenwoordigers-form, .dealer-form {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-end;
 }
 
-.form-group-vertegenwoordigers {
+.form-group-vertegenwoordigers, .form-group-dealer {
 	display: flex;
 	flex-direction: column;
 	margin-right: 10px;
@@ -149,28 +155,30 @@
 }
 
 .vertegenwoordigers-form .form-group-vertegenwoordigers input,
-.vertegenwoordigers-form .form-group-vertegenwoordigers select {
+.vertegenwoordigers-form .form-group-vertegenwoordigers select,
+.dealer-form .form-group-dealer input,
+.dealer-form .form-group-dealer select {
 	border-radius: 7px;
 	min-width: 100%;
 	height: 36px;
 }
 
-.form-group-vertegenwoordigers-button {
+.form-group-vertegenwoordigers-button, .form-group-dealer-button {
 	margin-left: auto;
 }
 
-.vertegenwoordigers-table-row {
+.vertegenwoordigers-table-row, .dealer-table-row {
 	background-color: var(--color-primary);
 	border: 1px solid var(--color-primary);
 	color: white;
 }
 
-.vertegenwoordigers-table-row th {
+.vertegenwoordigers-table-row th, .dealer-table-row th {
 	font-weight: 300;
 	border: none;
 }
 
-.vertegenwoordigers-table td {
+.vertegenwoordigers-table td, .dealer-table td {
 	border: 1px solid var(--color-border);
 	text-align: left;
 }
@@ -179,6 +187,7 @@
 	color: var(--color-dark) !important;
 }
 /* CRUD Form and Table END */
+
 
 /* Hamburger menu styling */
 .hamburger-menu {
@@ -233,8 +242,9 @@
 }
 /* Hamburger menu END */
 
+
 /* Pagination styling */
-.vertegenwoordiger-pagination {
+.vertegenwoordiger-pagination, .dealer-pagination {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: right;
@@ -242,7 +252,7 @@
 	margin-top: 0.3em;
 }
 
-.vertegenwoordiger-pagination button {
+.vertegenwoordiger-pagination button, .dealer-pagination button {
 	padding: 0.2em 0.5em;
 	background: transparent;
 	color: var(--color-primary);
@@ -252,20 +262,23 @@
 }
 
 .vertegenwoordiger-pagination button:hover,
-.vertegenwoordiger-pagination button.current {
+.vertegenwoordiger-pagination button.current,
+.dealer-pagination button:hover,
+.dealer-pagination button.current {
 	background: var(--color-primary);
 	color: white;
 	border-radius: 7px;
 }
 
-.vertegenwoordiger-pagination .dots {
+.vertegenwoordiger-pagination .dots, .dealer-pagination .dots {
 	padding: 0.2em 0.2em;
 	color: var(--color-primary);
 	font-weight: bold;
 }
 /* Pagination END */
 
-/* AJAX Spinner */
+
+/* CRUD AJAX Spinner */
 #custom-spinner {
 	border: 4px solid #f3f3f3;
 	border-top: 4px solid var(--color-primary);
@@ -281,10 +294,11 @@
 	100% { transform: rotate(360deg); }
 }
 
-.vertegenwoordiger-spinner-container {
+.vertegenwoordiger-spinner-container, .dealer-spinner-container {
 	height: 28px;
 }
-/* AJAX Spinner END */
+/* CRUD AJAX Spinner END */
+
 
 /* Buttons styling */
 #csv-upload-icon {
@@ -300,8 +314,8 @@
 }
 
 .custom-button:hover {
-	background-color: var(--color-accent);
-	border-color: var(--color-accent);
+	background-color: #de8457;
+	border-color: #de8457;
 	color: white;
 }
 
@@ -312,6 +326,7 @@
 	gap: 10px;
 }
 /* Buttons END */
+
 
 /* Profile page styling */
 #change-logo-button {
@@ -333,9 +348,9 @@
 }
 
 .saved-status-failed {
-	background-color: var(--error-bg-red);
-	border: 1px solid var(--error-red);
-	color: var(--error-red);
+	background-color: #ffeceb;
+	border: 1px solid #eb4034;
+	color: #eb4034;
 	width: 25rem;
 	padding: 10px 20px;
 }
@@ -368,3 +383,38 @@
 	margin-bottom: 8px;
 }
 /* Profile page END */
+
+
+/* Responsive */
+@media only screen and (max-width: 991px) {
+	.vertegenwoordigers-form .form-group-vertegenwoordigers,
+	.dealer-form .form-group-dealer {
+		width: 100%;
+		margin-top: 10px;
+	}
+	
+	.form-group-vertegenwoordigers-button,
+	.from-group-dealer-button {
+		margin-left: 0px;
+		margin-top: 10px;
+	}
+	
+	.vertegenwoordigers-search-container,
+	.dealer-search-container {
+		justify-content: flex-start;
+	}
+	
+	#vertegenwoordigers-search,
+	#dealer-search {
+		height: 40px;
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 495px) {
+	#ajax-results {
+		overflow-x: scroll;
+    	overflow-y: hidden;
+	}
+}
+/* Responsive END */

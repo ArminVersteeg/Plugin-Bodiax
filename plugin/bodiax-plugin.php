@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bodiax
  * Description: Custom CRUD's for dealers and representatives, also adds small other functions/widgets. Created for the Bodiax dealerportal.
- * Version: 3.1.0
+ * Version: 3.2.5
  * Author: Armin Versteeg
 */
 
@@ -32,13 +32,11 @@ define( 'BODIAX_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 // Enqueue plugin scripts
 function bodiax_enqueue_scripts_frontend() {
 	bodiax_enqueue_scripts_from_dir('public/js/'); // Load public scripts (frontend only)
-	bodiax_enqueue_scripts_from_dir('assets/js/'); // Load shared assets (frontend)
 }
 add_action('wp_enqueue_scripts', 'bodiax_enqueue_scripts_frontend');
 
 function bodiax_enqueue_scripts_admin() {
 	bodiax_enqueue_scripts_from_dir('admin/js/'); // Load admin scripts (admin only)
-	bodiax_enqueue_scripts_from_dir('assets/js/'); // Load shared assets (admin)
 }
 add_action('admin_enqueue_scripts', 'bodiax_enqueue_scripts_admin');
 
@@ -57,13 +55,11 @@ function bodiax_enqueue_scripts_from_dir($relative_dir) {
 // Enqueue plugin styles
 function bodiax_enqueue_styles_frontend() {
 	bodiax_enqueue_styles_from_dir('public/style/'); // Load public styles (frontend only)
-	bodiax_enqueue_styles_from_dir('assets/style/'); // Load shared assets (frontend)
 }
 add_action('wp_enqueue_scripts', 'bodiax_enqueue_styles_frontend');
 
 function bodiax_enqueue_styles_admin() {
 	bodiax_enqueue_styles_from_dir('admin/style/'); // Load admin styles (admin only)
-	bodiax_enqueue_styles_from_dir('assets/style/'); // Load shared assets (admin)
 }
 add_action('admin_enqueue_scripts', 'bodiax_enqueue_styles_admin');
 

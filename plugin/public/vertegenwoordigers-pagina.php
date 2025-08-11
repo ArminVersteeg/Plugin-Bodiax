@@ -4,7 +4,7 @@
 function toggle_buttons_and_containers() {
 	// Build button container
 	ob_start(); ?>
-	<div class="toggle-button-container">
+	<div class="toggle-buttons-container">
 		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
 		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="action" value="process_csv_upload">
@@ -127,9 +127,9 @@ function list_vertegenwoordigers_shortcode() {
 				<div id="custom-spinner" style="display: none;"></div>
 			</div>
 			<div class="vertegenwoordigers-search-container">
-				<input type="text" id="vertegenwoordigers-search" placeholder="Zoeken..." />
+				<input type="text" id="ajax-search" placeholder="Zoeken..." />
 			</div>
-			<div id="vertegenwoordiger-results">' 
+			<div id="ajax-results" data-action="search_vertegenwoordigers">' 
 				. vertegenwoordiger_table_html($entries) .
 			'</div>';
 	
@@ -282,6 +282,7 @@ function handle_vertegenwoordiger_update() {
 	$old_region = get_post_meta($id, 'vertegenwoordiger_region', true);
 	$old_custom_id = get_post_meta($id, 'vertegenwoordiger_custom_id', true);
 	
+	// Update post with new information
 	update_post_meta($id, 'vertegenwoordiger_name', $name);
 	update_post_meta($id, 'vertegenwoordiger_email', $email);
 	update_post_meta($id, 'vertegenwoordiger_region', $region);
@@ -380,11 +381,11 @@ function search_vertegenwoordigers_ajax() {
 		echo '<div class="vertegenwoordiger-pagination">';
 		
 		if ($page > 1) {
-			echo '<button class="vertegenwoordiger-page-btn" data-page="' . ($page - 1) . '">‹</button>';
+			echo '<button class="pagination-page-btn" data-page="' . ($page - 1) . '">‹</button>';
 		}
 		
 		if ($page > 2) {
-			echo '<button class="vertegenwoordiger-page-btn" data-page="1">1</button>';
+			echo '<button class="pagination-page-btn" data-page="1">1</button>';
 			if ($page > 3) {
 				echo '<span class="dots">...</span>';
 			}
@@ -394,7 +395,7 @@ function search_vertegenwoordigers_ajax() {
 			if ($i == $page) {
 				echo '<button class="current" disabled>' . $i . '</button>';
 			} else {
-				echo '<button class="vertegenwoordiger-page-btn" data-page="' . $i . '">' . $i . '</button>';
+				echo '<button class="pagination-page-btn" data-page="' . $i . '">' . $i . '</button>';
 			}
 		}
 		
@@ -402,11 +403,11 @@ function search_vertegenwoordigers_ajax() {
 			if ($page < $total_pages - 2) {
 				echo '<span class="dots">...</span>';
 			}
-			echo '<button class="vertegenwoordiger-page-btn" data-page="' . $total_pages . '">' . $total_pages . '</button>';
+			echo '<button class="pagination-page-btn" data-page="' . $total_pages . '">' . $total_pages . '</button>';
 		}
 		
 		if ($page < $total_pages) {
-			echo '<button class="vertegenwoordiger-page-btn" data-page="' . ($page + 1) . '">›</button>';
+			echo '<button class="pagination-page-btn" data-page="' . ($page + 1) . '">›</button>';
 		}
 		
 		echo '</div>';
@@ -435,7 +436,6 @@ add_filter('posts_where', 'filter_vertegenwoordiger_post_title', 10, 2);
 
 // =============== CSV UPLOAD =================
 // ============ PROCESS CSV FILE ==============
-// === PROCESS CSV FILE ===
 function handle_csv_upload() {
 	// Check nonce for security
 	if (!isset($_POST['csv_upload_nonce']) || !wp_verify_nonce($_POST['csv_upload_nonce'], 'csv_upload_action')) {
@@ -452,7 +452,7 @@ function handle_csv_upload() {
 	
 	// Check if it's a valid CSV file
 	if ($file['type'] !== 'text/csv' && $file['type'] !== 'application/vnd.ms-excel') {
-		wp_die('Invalid file type. Please upload a CSV file.');
+		wp_die('Ongeldig bestandstype. Upload a.u.b. een CSV bestand.');
 	}
 	
 	$handle = fopen($file['tmp_name'], 'r'); // Open the file for reading
@@ -478,7 +478,7 @@ function handle_csv_upload() {
 				'posts_per_page' => 1,
 				'meta_query' => [
 					['key' => 'vertegenwoordiger_name', 'value' => $name, 'compare' => '=']
-				]
+				],
 			]);
 			
 			// Check for duplicate email
@@ -487,7 +487,7 @@ function handle_csv_upload() {
 				'posts_per_page' => 1,
 				'meta_query' => [
 					['key' => 'vertegenwoordiger_email', 'value' => $email, 'compare' => '=']
-				]
+				],
 			]);
 			
 			// If either or both are duplicates, skip and set reason
@@ -510,7 +510,7 @@ function handle_csv_upload() {
 				continue; // Skip insertion
 			}
 			
-			// Generate the unique timestamp for this post
+			// Generate the unique timestamp for each post
 			$unique_timestamp = time() + $row;
 			
 			// Insert the data into the custom post type 'vertegenwoordiger'
@@ -531,6 +531,7 @@ function handle_csv_upload() {
 			
 			$row++;
 		}
+		
 		fclose($handle);
 	}
 	
@@ -545,7 +546,7 @@ function handle_csv_upload() {
 			'names' => urlencode(implode('|', $names)),
 			'emails' => urlencode(implode('|', $emails)),
 			'reasons' => urlencode(implode('|', $reasons))
-		], home_url('/vertegenwoordigers'));
+		], wp_get_referer());
 		
 		wp_redirect($url); 
 		exit;
@@ -625,37 +626,9 @@ function check_vertegenwoordiger_duplicates($name, $email) {
 		exit;
 	}
 	
-	return ['duplicate' => !empty($duplicates), 'name' => $name, 'email' => $email, 'reason' => implode(' en ', $duplicates) . ' bestaan al'];
+	return [
+		'duplicate' => !empty($duplicates),
+		'name' => $name, 'email' => $email,
+		'reason' => implode(' en ', $duplicates) . ' bestaan al'
+	];
 }
-
-// === DUPLICATE ERROR SHORTCODE ===
-function duplicate_modal_shortcode($atts) {
-	// Get and sanitize query string parameters
-	$names = isset($_GET['names']) ? explode('|', sanitize_text_field($_GET['names'])) : [];
-	$emails = isset($_GET['emails']) ? explode('|', sanitize_text_field($_GET['emails'])) : [];
-	$reasons = isset($_GET['reasons']) ? explode('|', sanitize_text_field($_GET['reasons'])) : [];
-	
-	// Build error modal
-	ob_start(); ?>
-	<?php if (!empty($names)) : ?>
-	<div id="error-modal" class="modal-overlay" style="display: none;">
-		<div class="modal-box">
-			<h3>Deze items zijn overgeslagen i.v.m. duplicaties:</h3>
-			<p class="modal-message">
-				<?php foreach ($names as $key => $name): ?>
-					<?php
-						$email = isset($emails[$key]) ? $emails[$key] : '';
-						$reason = isset($reasons[$key]) ? $reasons[$key] : 'al in gebruik';
-					?>
-				<strong><?php echo esc_html($name); ?></strong>
-				<?php if (!empty($email)) echo ' <strong>(' . esc_html($email) . ')</strong>'; ?> is overgeslagen omdat deze <strong><?php echo esc_html($reason); ?></strong>.
-				<?php if ($key < count($names) - 1) echo '<br>'; ?>
-				<?php endforeach; ?>
-			</p>
-			<button id="modal-ok" class="modal-button">OK</button>
-		</div>
-	</div>
-	<?php endif;
-	return ob_get_clean();
-}
-add_shortcode('duplicate_modal', 'duplicate_modal_shortcode');

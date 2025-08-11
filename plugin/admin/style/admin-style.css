@@ -1,26 +1,55 @@
-#vertegenwoordiger_meta_box .form-group-vertegenwoordigers {
+:root {
+	--color-primary: #b25f35;
+	--color-accent: #de8457;
+}
+
+#vertegenwoordiger_meta_box .form-group-vertegenwoordigers,
+#dealer_meta_box .form-group-dealers {
 	display: flex;
 	align-items: center;
 	margin-bottom: 12px;
 }
 
-#vertegenwoordiger_meta_box label {
+#vertegenwoordiger_meta_box label,
+#dealer_meta_box label {
 	width: 120px;
 	font-weight: bold;
 	margin-right: 10px;
 }
 
 #vertegenwoordiger_meta_box input,
-#vertegenwoordiger_meta_box select {
+#vertegenwoordiger_meta_box select,
+#dealer_meta_box input {
 	flex: 1;
 	padding: 6px;
 	font-size: 14px;
 }
 
-#vertegenwoordiger_meta_box {
+#vertegenwoordiger_meta_box,
+#dealer_meta_box {
 	max-width: 500px;
 }
 
 .postbox .inside {
 	padding: 12px;
+}
+
+.custom-button {
+	padding: 5px 20px;
+	border-radius: 7px;
+	letter-spacing: 2px;
+	font-size: 13px;
+	background-color: var(--color-primary);
+	border: 0px;
+	color: white;
+}
+
+.custom-button:hover {
+	background-color: var(--color-accent);
+	border-color: var(--color-accent);
+	color: white;
+}
+
+.csv-button:hover {
+	cursor: pointer;
 }

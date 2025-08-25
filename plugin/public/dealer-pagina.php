@@ -386,7 +386,7 @@ function handle_dealer_csv_upload() {
 	if (!isset($_POST['csv_upload_nonce']) || !wp_verify_nonce($_POST['csv_upload_nonce'], 'dealer_csv_upload_action')) {
 		wp_die('Security check failed.');
 	}
-
+	
 	// Check if a file has been uploaded
 	if (empty($_FILES['csv_file']['tmp_name'])) {
 		wp_die('No file uploaded.');
@@ -411,7 +411,7 @@ function handle_dealer_csv_upload() {
 				$row++;
 				continue;
 			}
-
+			
 			// Parse the CSV data
 			$name = sanitize_text_field($data[0]);
 			$email = sanitize_email($data[1]);

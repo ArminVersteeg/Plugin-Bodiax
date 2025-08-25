@@ -368,3 +368,36 @@
 	margin-bottom: 8px;
 }
 /* Profile page END */
+
+/* Responsive */
+@media only screen and (max-width: 991px) {
+	.vertegenwoordigers-form .form-group-vertegenwoordigers,
+	.dealer-form .form-group-dealer {
+		width: 100%;
+		margin-top: 10px;
+	}
+	
+	.form-group-vertegenwoordigers-button,
+	.from-group-dealer-button {
+		margin-left: 0px;
+		margin-top: 10px;
+	}
+	
+	.vertegenwoordigers-search-container,
+	.dealer-search-container {
+		justify-content: flex-start;
+	}
+	
+	#ajax-search {
+		height: 36px;
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 495px) {
+	#ajax-results {
+		overflow-x: scroll;
+    	overflow-y: hidden;
+	}
+}
+/* Responsive END */

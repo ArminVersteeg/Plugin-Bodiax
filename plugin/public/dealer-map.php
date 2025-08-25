@@ -27,7 +27,7 @@ function dealer_map_shortcode() {
 				$email   = get_post_meta($dealer->ID, 'dealer_email', true);
 			?>
 			
-			<div class="dealer-entry" style="margin-bottom:15px; padding:10px; border:1px solid #ddd;">
+			<div class="dealer-entry">
 				<div class="card-text">
 					<h4 class="card-title"><?php echo esc_html($name); ?></h4>
 					<span><?php echo esc_html($address); ?></span>
@@ -35,7 +35,7 @@ function dealer_map_shortcode() {
 				</div>
 				<button class="custom-button"><a href="<?php echo esc_url( add_query_arg( 'address', urlencode($address) ) ); ?>" class="locate-btn">Weergeven op kaart</a></button>
 			</div>
-
+			
 			<?php endforeach; ?>
 		</div>
 	</div>

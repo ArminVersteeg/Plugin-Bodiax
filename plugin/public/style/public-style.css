@@ -385,6 +385,68 @@
 /* Profile page END */
 
 
+<<<<<<< HEAD
+=======
+/* Dealer map styling */
+.leaflet-control-attribution {
+	display: none !important;
+}
+
+.dealer-map-wrapper {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 20px;
+}
+
+.dealer-map {
+	flex: 2;
+	min-width: 300px;
+	height: 500px;
+	border-radius: 10px;
+	margin-bottom: 20px;
+}
+
+.dealer-sidebar {
+	flex: 1;
+	max-height: 500px;
+	overflow-y: auto;
+	padding-left: 10px;
+}
+
+.dealer-entry {
+	background-color: white;
+	border-radius: 10px;
+	margin: 15px 15px 0px 0px;
+	padding: 10px;
+	box-shadow: 0px 0px 7px 0px rgba(175, 175, 175);
+}
+
+.dealer-entry strong {
+	display: block;
+	font-size: 1.1em;
+	margin-bottom: 4px;
+}
+
+.card-text {
+	margin-bottom: 20px;
+	margin-left: 2px;
+}
+
+.card-title {
+	margin: 0px;
+}
+
+.locate-btn {
+	color: white !important;
+}
+
+.locate-btn:hover {
+	color: white !important;
+}
+/* Dealer map END*/
+
+
+>>>>>>> DealerPage
 /* Responsive */
 @media only screen and (max-width: 991px) {
 	.vertegenwoordigers-form .form-group-vertegenwoordigers,

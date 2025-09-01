@@ -33,7 +33,9 @@ function dealer_map_shortcode() {
 					<span><?php echo esc_html($address); ?></span>
 					<small><?php echo esc_html($email); ?></small>
 				</div>
-				<button class="custom-button"><a href="<?php echo esc_url( add_query_arg( 'address', urlencode($address) ) ); ?>" class="locate-btn">Weergeven op kaart</a></button>
+				<button class="custom-button" type="button">
+					<a href="<?php echo esc_url( add_query_arg( 'address', urlencode($address) ) ); ?>" class="locate-btn">Weergeven op kaart</a>
+				</button>
 			</div>
 			
 			<?php endforeach; ?>

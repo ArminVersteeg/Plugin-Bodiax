@@ -5,12 +5,12 @@ function toggle_buttons_and_containers() {
 	// Build button container
 	ob_start(); ?>
 	<div class="toggle-buttons-container">
-		<button id="toggle-create" class="toggle-button custom-button">Nieuw</button>
+		<button id="toggle-create" class="toggle-button custom-button" type="button">Nieuw</button>
 		<form class="csv-upload-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="action" value="process_csv_upload">
 			<?php wp_nonce_field('csv_upload_action', 'csv_upload_nonce'); ?>
 			<input type="file" style="display: none;" name="csv_file" id="csv_file" required>
-			<button class="toggle-button custom-button" type="button" id="upload-button">
+			<button class="toggle-button custom-button" id="upload-button" type="button">
 				<svg aria-hidden="true" id="csv-upload-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 					<path d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">
 					</path>
@@ -381,11 +381,11 @@ function search_vertegenwoordigers_ajax() {
 		echo '<div class="vertegenwoordiger-pagination">';
 		
 		if ($page > 1) {
-			echo '<button class="pagination-page-btn" data-page="' . ($page - 1) . '">‹</button>';
+			echo '<button class="pagination-page-btn" data-page="' . ($page - 1) . '" type="button">‹</button>';
 		}
 		
 		if ($page > 2) {
-			echo '<button class="pagination-page-btn" data-page="1">1</button>';
+			echo '<button class="pagination-page-btn" data-page="1" type="button">1</button>';
 			if ($page > 3) {
 				echo '<span class="dots">...</span>';
 			}
@@ -395,7 +395,7 @@ function search_vertegenwoordigers_ajax() {
 			if ($i == $page) {
 				echo '<button class="current" disabled>' . $i . '</button>';
 			} else {
-				echo '<button class="pagination-page-btn" data-page="' . $i . '">' . $i . '</button>';
+				echo '<button class="pagination-page-btn" data-page="' . $i . '" type="button">' . $i . '</button>';
 			}
 		}
 		
@@ -403,11 +403,11 @@ function search_vertegenwoordigers_ajax() {
 			if ($page < $total_pages - 2) {
 				echo '<span class="dots">...</span>';
 			}
-			echo '<button class="pagination-page-btn" data-page="' . $total_pages . '">' . $total_pages . '</button>';
+			echo '<button class="pagination-page-btn" data-page="' . $total_pages . '" type="button">' . $total_pages . '</button>';
 		}
 		
 		if ($page < $total_pages) {
-			echo '<button class="pagination-page-btn" data-page="' . ($page + 1) . '">›</button>';
+			echo '<button class="pagination-page-btn" data-page="' . ($page + 1) . '" type="button">›</button>';
 		}
 		
 		echo '</div>';

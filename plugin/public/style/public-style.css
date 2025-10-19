@@ -167,18 +167,18 @@
 	margin-left: auto;
 }
 
-.vertegenwoordigers-table-row, .dealer-table-row {
+.vertegenwoordigers-table-row, .dealer-table-row, .cr-table-row {
 	background-color: var(--color-primary);
 	border: 1px solid var(--color-primary);
 	color: white;
 }
 
-.vertegenwoordigers-table-row th, .dealer-table-row th {
+.vertegenwoordigers-table-row th, .dealer-table-row th, .cr-table-row th {
 	font-weight: 300;
 	border: none;
 }
 
-.vertegenwoordigers-table td, .dealer-table td {
+.vertegenwoordigers-table td, .dealer-table td, .cr-table td {
 	border: 1px solid var(--color-border);
 	text-align: left;
 }
@@ -385,8 +385,54 @@
 /* Profile page END */
 
 
-<<<<<<< HEAD
-=======
+/* Dealer styling */
+#create-container {
+	display: none;
+	padding: 10px;
+}
+
+.dealer-form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-width: 400px;
+}
+
+.dealer-form-row {
+	display: flex;
+	gap: 3px;
+}
+
+.dealer-input-25 {
+	flex: 0 0 25%;
+	max-width: 25%;
+}
+
+.dealer-input-50 {
+	flex: 0 0 50%;
+	max-width: 50%;
+}
+
+.dealer-input-75 {
+	flex: 0 0 75%;
+	max-width: 75%;
+}
+
+.dealer-input-100 {
+	flex: 0 0 100%;
+	max-width: 100%;
+}
+
+.dealer-form .dealer-form-row input {
+	width: 100%;
+	border-radius: 7px;
+	height: 36px;
+	padding: 0 8px;
+	box-sizing: border-box;
+}
+/* Dealer END */
+
+
 /* Dealer map styling */
 .leaflet-control-attribution {
 	display: none !important;
@@ -440,12 +486,6 @@
 	padding: 10px;
 }
 
-.dealer-entry strong {
-	display: block;
-	font-size: 1.1em;
-	margin-bottom: 4px;
-}
-
 .card-text {
 	margin-left: 2px;
 	display: flex;
@@ -468,6 +508,7 @@
 .locate-btn:hover {
 	color: white !important;
 }
+
 
 /* Loader overlay */
 #map-loader {
@@ -498,7 +539,87 @@
 /* Dealer map END*/
 
 
->>>>>>> DealerPage
+/* Klantverzoeken styling */
+.cr-message {
+	max-width: 500px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.cr-view-btn {
+	cursor: pointer;
+	padding: 4px 8px;
+	background-color: var(--color-primary);
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+}
+
+.cr-view-btn:hover {
+	background-color: #de8457;
+}
+
+#cr-modal {
+	display: none;
+	position: fixed;
+	top:0;
+	left:0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+}
+
+#cr-modal .cr-modal-content {
+	background: #fff;
+	padding: 20px;
+	max-width: 750px;
+	width: 90%;
+	position: relative;
+	border-radius: 8px;
+}
+
+#cr-modal-close {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	cursor: pointer;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.cr-entry {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	position: relative;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-left: 3px solid var(--color-primary);
+	cursor: pointer;
+	transition: background 0.2s;
+	background: #fff5f0;
+}
+
+.cr-entry:hover {
+  background: #ffede4;
+}
+
+.entry-block1 {
+	flex: 1;
+}
+
+.entry-block2 {
+	align-self: flex-end;
+	text-align: right;
+	min-width: 120px;
+}
+/* Klantverzoeken END */
+
+
 /* Responsive */
 @media only screen and (max-width: 991px) {
 	.vertegenwoordigers-form .form-group-vertegenwoordigers,

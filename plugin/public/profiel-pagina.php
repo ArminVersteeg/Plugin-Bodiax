@@ -153,6 +153,7 @@ function custom_update_password_form_shortcode() {
 	<?php return ob_get_clean();
 }
 
+
 // === HANDLE PASSWORD UPDATE AJAX ===
 add_action('wp_ajax_custom_update_password', 'handle_custom_update_password');
 function handle_custom_update_password() {

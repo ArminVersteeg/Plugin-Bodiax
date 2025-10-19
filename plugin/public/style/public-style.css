@@ -401,24 +401,43 @@
 .dealer-map {
 	flex: 2;
 	min-width: 300px;
-	height: 500px;
+	height: 600px;
 	border-radius: 10px;
 	margin-bottom: 20px;
 }
 
 .dealer-sidebar {
 	flex: 1;
-	max-height: 500px;
+	padding-right: 10px;
+}
+
+.dealer-card-wrapper {
 	overflow-y: auto;
-	padding-left: 10px;
+	max-height: 550px;
+}
+
+.dealer-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.zipcode-search {
+	display: flex;
+}
+
+#zipcode-input {
+	border-radius: 7px;
+    height: 36px;
+}
+
+.zipcode-search .custom-button {
+	margin-left: auto;
 }
 
 .dealer-entry {
 	background-color: white;
 	border-radius: 10px;
-	margin: 15px 15px 0px 0px;
+	margin-bottom: 15px;
 	padding: 10px;
-	box-shadow: 0px 0px 7px 0px rgba(175, 175, 175);
 }
 
 .dealer-entry strong {
@@ -428,20 +447,53 @@
 }
 
 .card-text {
-	margin-bottom: 20px;
 	margin-left: 2px;
+	display: flex;
+    flex-direction: column;
 }
 
 .card-title {
-	margin: 0px;
+	margin: 0px 0px 5px 0px; /* 0px Top margin, 5px Bottom margin */
+}
+
+.card-email {
+	color: #252525 !important;
 }
 
 .locate-btn {
 	color: white !important;
+	margin-top: auto;
 }
 
 .locate-btn:hover {
 	color: white !important;
+}
+
+/* Loader overlay */
+#map-loader {
+    display: none;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 500; /* enough to be above tiles & markers */
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* so clicks pass through when hidden */
+}
+
+#map-loader .spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid var(--color-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 /* Dealer map END*/
 
